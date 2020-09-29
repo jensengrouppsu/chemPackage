@@ -1,0 +1,22 @@
+This directory should contain subdirectories for test cases for the 
+chem package. This should be tested when ever changes are made, and
+***ESPECIALLY*** before changes are pushed. 
+
+This will save precious time that we constantly waste fixing things in 
+the chem package that used to work correctly. Please update these dirs 
+and subdirs with files and correct outputs for cases that you use. It 
+is imperative that everyone uses this because we often work on such
+different areas of the chem package that we do not realize we break
+features that others are dependent on.
+
+For a template on how to view setting up these tests, take a look at the
+$TESTDIR/adf/freq directory. Here I have set up an output file named
+'freq.out' to test the coordinate collection and the frequency displaying 
+of this file. Other directories should also have this 'runtest.sh' script
+created when populated. This way, we can make a script that lies in the 
+$TESTDIR directory that will enter all subdirs and run those scripts.
+
+Any questions, come see me. Being active with this will make our lives 
+much easier in the long run.
+
+- Jeff Becca 
