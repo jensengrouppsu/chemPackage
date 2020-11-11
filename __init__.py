@@ -46,6 +46,7 @@ def collect(file, raise_err=True, project='all'):
     import stat
 
     # Check if this is a pickle.  If so, we may skip the rest of this function
+    #print( os.path.splitext(file))
     if os.path.splitext(file)[1] == '.pickle':
         from cPickle import load
         # Raises IOError if doesn't exist.
@@ -82,11 +83,17 @@ def collect(file, raise_err=True, project='all'):
         if nwchem_out or nwchem_in:
             from .nwchem import NWChem
             d = NWChem(file)
+        elif adf_out or adf_in:
+            from .adf import ADF
+            d = ADF(file)
+        elif dim_out or dim_in:
+            from .dim import DIM
+            d = DIM(file)
         elif xyz_file:
-            from chemdata import ChemData
+            from .chemdata import ChemData
             d = ChemData(file)
         elif tdspec_out:
-            from tdspec import TDSPEC
+            from .tdspec import TDSPEC
             d = TDSPEC(file)
         elif empty_file:
             from emptyfile import EmptyFile
