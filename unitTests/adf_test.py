@@ -3,7 +3,7 @@ from chemPackage import collect
 
 class TestADFMethods(unittest.TestCase):
     def setUp(self):
-        self.test = collect('../adf/raman/raman-benzene.orig.out')
+        self.test = collect('unitTests/raman-benzene.out')
 
     def test_init(self):
         self.assertEqual(type(self.test.program), type(str('ADF')), 'incorrect program')
