@@ -15,11 +15,17 @@ class TestADFMethods(unittest.TestCase):
 
     def test_nModes(self):
         self.assertEqual(self.test.nmodes, 3, 'incorrect # of normal modes')
-        nm1 = np.array(((0. , -0.22394376, -0.29859169), 
+        nm1 = np.array((((0. , -0.22394376, -0.29859169), 
                        (0. ,  0.22394376, -0.29859169),  
-                       (0. ,  0. ,          0.03758867)))
+                       (0. ,  0. ,          0.03758867)),
+                       ((0., -0.31096703, 0.20731136),
+                        (0.,  0.31096703, 0.20731136),
+                        (0.,  0.,        -0.02591392)),
+                       ((0.,  0.2935258, -0.23058963),
+                        (0.,  0.2935258,  0.23058963),
+                        (0., -0.03702127, 0.))))
         self.assertEqual(np.shape(self.test.normal_modes), (3,3,3), 'wrong shape for normal modes array')
-        np.testing.assert_array_almost_equal(self.test.normal_modes[0,:,:], nm1[:,:])
+        np.testing.assert_array_almost_equal(self.test.normal_modes, nm1)
     
     def test_IR(self):
         self.assertEqual(len(self.test.IR), 3, 'incorrect # IR absorption intensities')
