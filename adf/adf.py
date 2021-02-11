@@ -5,7 +5,7 @@ from numpy import array, zeros, transpose
 
 # Create the ADF class to grab and hold all the information in the file
 class ADF(ChemData):
-    '''Read and conatin data from ADF files
+    '''Read and contain data from ADF files
     
     This class is used to read all information from either an ADF input or
     output file.  It stores this data in formats suitable for processing.  
