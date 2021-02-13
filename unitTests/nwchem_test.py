@@ -18,3 +18,14 @@ class TestNWClass(unittest.TestCase):
         self.assertEqual(self.test.energy['XC'], -8.026930069048, 'incorrect energy')
         self.assertEqual(self.test.energy['nuc. repulsion'], 11.844194486605, 'incorrect energy')
         self.assertEqual(self.test.energy['total'], -56.509475409542, 'incorrect energy')
+        
+    def test_dipole(self):
+        self.assertEqual(self.test.dipole[0], -1.6998385895583998, 'incorrect dipole x')
+        self.assertEqual(self.test.dipole[1], 0.44072101619589993, 'incorrect dipole y')
+        self.assertEqual(self.test.dipole[2], -0.0, 'incorrect dipole z')
+
+    def test_symmetry(self):
+        self.assertEqual(self.test.symmetry, 'Cs', 'incorrect symmetry')
+
+    def test_calctype(self):
+        self.assertEqual(self.test.calctype, {'RESTRICTED', 'DFT', 'GEOMETRY'}, 'incorrect symmetry')
