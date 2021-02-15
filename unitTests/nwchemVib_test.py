@@ -20,19 +20,40 @@ class TestNWClass(unittest.TestCase):
         self.assertEqual(self.test.v_frequencies[10], 3561.84, 'incorrect freq')
         self.assertEqual(self.test.v_frequencies[11], 3561.84, 'incorrect freq')
 
-#    def test_nModes(self):
-#        self.assertEqual(self.test.nmodes, 12, 'incorrect # of normal modes')
-#        nm1 = np.array((((0. , -0.22394376, -0.29859169), 
-#                       (0. ,  0.22394376, -0.29859169),  
-#                       (0. ,  0. ,          0.03758867)),
-#                       ((0., -0.31096703, 0.20731136),
-#                        (0.,  0.31096703, 0.20731136),
-#                        (0.,  0.,        -0.02591392)),
-#                       ((0.,  0.2935258, -0.23058963),
-#                        (0.,  0.2935258,  0.23058963),
-#                        (0., -0.03702127, 0.))))
-#        self.assertEqual(np.shape(self.test.normal_modes), (12,4,3), 'wrong shape for normal modes array')
-#        np.testing.assert_array_almost_equal(self.test.normal_modes, nm1)
+    def test_nModes(self):
+        self.assertEqual(self.test.nmodes, 12, 'incorrect # of normal modes')
+        self.assertEqual(np.shape(self.test.normal_modes), (12,4,3), 'wrong shape for normal modes array')
+        nm0 = np.array(((-0.017761,  0.02229 , -0.002359),
+                        (0.063445, -0.19627 , -0.312672),
+                        (0.200778, -0.058942,  0.307991),
+                        (0.013177, -0.008675, -0.002397)))
+        nm1 = np.array(((-0.015589, -0.01384 , -0.020262),
+                        (0.137969,  0.247559, -0.205675),
+                        (-0.180876, -0.071286,  0.008945),
+                        (0.254674, -0.187991,  0.135954)))
+        nm2 = np.array([[ 0.012879,  0.013271, -0.211822],
+                        [-0.061085, -0.052533, -0.086751],
+                        [-0.063249, -0.054697, -0.106205],
+                        [-0.060293, -0.05549 , -0.44251 ]])
+        nm3 = np.array([[-0.01634 , -0.021402, -0.042451],
+                        [ 0.033448, -0.024203, -0.154656],
+                        [ 0.193481,  0.135824, -0.266708],
+                        [-0.02513 ,  0.194401,  0.294005]])
+        nm4 = np.array([[-0.002095,  0.255491, -0.001903],
+                        [ 0.022595,  0.312314, -0.022914],
+                        [-0.042032,  0.247686, -0.008336],
+                        [ 0.046243,  0.224038,  0.025551]])
+        nm5 = np.array([[ 0.265209, -0.000984, -0.001302],
+                        [ 0.264563,  0.006136,  0.004375],
+                        [ 0.262693,  0.004277, -0.014459],
+                        [ 0.265242,  0.003598,  0.006201]])
+
+        np.testing.assert_array_almost_equal(self.test.normal_modes[0,:,:], nm0)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[1,:,:], nm1)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[2,:,:], nm2)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[3,:,:], nm3)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[4,:,:], nm4)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[5,:,:], nm5)
     
     def test_IR(self):
         self.assertEqual(len(self.test.IR), 12, 'incorrect # IR absorption intensities')
