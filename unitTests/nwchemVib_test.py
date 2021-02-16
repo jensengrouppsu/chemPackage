@@ -47,6 +47,30 @@ class TestNWClass(unittest.TestCase):
                         [ 0.264563,  0.006136,  0.004375],
                         [ 0.262693,  0.004277, -0.014459],
                         [ 0.265242,  0.003598,  0.006201]])
+        nm6 = np.array([[ 0.      ,  0.      , -0.060425],
+                        [-0.113518,  0.030419,  0.279847],
+                        [ 0.030419, -0.113518,  0.279847],
+                        [ 0.083099,  0.083099,  0.279847]])
+        nm7 = np.array([[-0.024831,  0.023958, -0.      ],
+                        [-0.11819 , -0.168986,  0.121638],
+                        [ 0.181333,  0.120007, -0.11915 ],
+                        [ 0.281851, -0.283886, -0.002488]])
+        nm8 = np.array([[-0.023958, -0.024831, -0.      ],
+                        [ 0.052924,  0.348186,  0.067355],
+                        [ 0.341916,  0.048657,  0.071666],
+                        [-0.061976, -0.051855, -0.139021]])
+        nm9 = np.array([[-0.      , -0.      ,  0.021518],
+                        [-0.278711,  0.07468 , -0.099656],
+                        [ 0.07468 , -0.278711, -0.099656],
+                        [ 0.204031,  0.204031, -0.099656]])
+        nm10 = np.array([[ 0.029481, -0.02931 ,  0.      ],
+                         [-0.33386 ,  0.08348 , -0.145317],
+                         [-0.083121,  0.332761,  0.144832],
+                         [ 0.007396, -0.009025,  0.000486]])
+        nm11 = np.array([[ 0.02931 ,  0.029481,  0.      ],
+                         [-0.187997,  0.0608  , -0.083337],
+                         [ 0.061286, -0.189935, -0.084182],
+                         [-0.280503, -0.280453,  0.167519]])
 
         np.testing.assert_array_almost_equal(self.test.normal_modes[0,:,:], nm0)
         np.testing.assert_array_almost_equal(self.test.normal_modes[1,:,:], nm1)
@@ -54,6 +78,12 @@ class TestNWClass(unittest.TestCase):
         np.testing.assert_array_almost_equal(self.test.normal_modes[3,:,:], nm3)
         np.testing.assert_array_almost_equal(self.test.normal_modes[4,:,:], nm4)
         np.testing.assert_array_almost_equal(self.test.normal_modes[5,:,:], nm5)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[6,:,:], nm6)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[7,:,:], nm7)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[8,:,:], nm8)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[9,:,:], nm9)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[10,:,:], nm10)
+        np.testing.assert_array_almost_equal(self.test.normal_modes[11,:,:], nm11)
     
     def test_IR(self):
         self.assertEqual(len(self.test.IR), 12, 'incorrect # IR absorption intensities')
