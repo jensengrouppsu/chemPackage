@@ -1,7 +1,7 @@
 import unittest
 from chemPackage import collect
 import numpy as np
-class TestNWClass(unittest.TestCase):
+class TestNWVib(unittest.TestCase):
     def setUp(self):
         self.test = collect('unitTests/nh3Freq.out')
 
