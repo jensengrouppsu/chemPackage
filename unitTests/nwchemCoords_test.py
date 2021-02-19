@@ -14,3 +14,14 @@ class TestNWCoords(unittest.TestCase):
                            [-0.057493,  0.628731,  0.812078],
                            [-0.410566, -0.73287 ,  0.      ]])
         np.testing.assert_array_almost_equal(self.test.coordinates, coords)
+
+    def test_atoms(self):
+        atoms = np.array(['N', 'H', 'H', 'H'], dtype='<U1')
+        np.testing.assert_array_equal(self.test.atoms, atoms)
+
+    def test_elements(self):
+        ele = {'N', 'H'}
+        self.assertEqual(self.test.elements, ele)
+
+    def test_nelements(self):
+        self.assertEqual(self.test.nelements, 2, 'wrong length of elements')
