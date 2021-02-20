@@ -25,3 +25,10 @@ class TestNWCoords(unittest.TestCase):
 
     def test_nelements(self):
         self.assertEqual(self.test.nelements, 2, 'wrong length of elements')
+
+    def test_optGeom(self):
+        initCoords = np.array([[ 0.050971, -0.099509,  0.      ],
+                               [-0.055838,  0.599485, -0.5     ],
+                               [-0.055838,  0.599485,  0.5     ],
+                               [-0.245121, -0.50241 ,  0.      ]], dtype=np.float64)
+        np.testing.assert_array_almost_equal(self.test.initial_geometry, initCoords)
