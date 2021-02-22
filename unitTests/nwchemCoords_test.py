@@ -32,3 +32,10 @@ class TestNWCoords(unittest.TestCase):
                                [-0.055838,  0.599485,  0.5     ],
                                [-0.245121, -0.50241 ,  0.      ]], dtype=np.float64)
         np.testing.assert_array_almost_equal(self.test.initial_geometry, initCoords)
+
+    def test_gsGradient(self):
+        grad = np.array([[-1.7e-05,  3.1e-05,  0.0e+00],
+                         [ 1.2e-05,  2.0e-06,  0.0e+00],
+                         [ 1.2e-05,  2.0e-06, -0.0e+00],
+                         [-7.0e-06, -3.5e-05,  0.0e+00]], dtype=np.float64)
+        np.testing.assert_array_almost_equal(self.test.gs_gradient['total DFT gradient'], grad)
