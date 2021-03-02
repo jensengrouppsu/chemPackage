@@ -32,8 +32,8 @@ def __dft_polarizability(self, f, indices):
             e = ix + 8 
             r = array([x.split()[1:4] for x in f[s:e]], dtype=float)
             # Imaginary
-            s = ix + 17
-            e = ix + 20 
+            s = ix + 20
+            e = ix + 23 
             # Need a try statement here because it is possible for the
             # numbers to overlap.
             try:
