@@ -4,6 +4,9 @@ from chemPackage import collect
 class TestNWClass(unittest.TestCase):
     def setUp(self):
         self.test = collect('unitTests/nh3Geom.out')
+        self.test2 = collect('unitTests/nh3Freq.out')
+        self.test3 = collect('unitTests/nh3Pol.out')
+        self.test4 = collect('unitTests/nh3Pol2.out')
 
     def test_init(self):
         self.assertEqual(type(self.test.program), type(str('NWChem')), 'incorrect program')
@@ -29,3 +32,6 @@ class TestNWClass(unittest.TestCase):
 
     def test_calctype(self):
         self.assertEqual(self.test.calctype, {'RESTRICTED', 'DFT', 'GEOMETRY'}, 'incorrect symmetry')
+        self.assertEqual(self.test2.calctype, {'RESTRICTED', 'DFT', 'FREQUENCIES'}, 'incorrect symmetry')
+        self.assertEqual(self.test3.calctype, {'RESTRICTED', 'DFT', 'OPTICAL ROTATION', 'POLARIZABILITY', 'FD'}, 'incorrect symmetry')
+        self.assertEqual(self.test4.calctype, {'RESTRICTED', 'DFT', 'OPTICAL ROTATION', 'POLARIZABILITY', 'STATIC'}, 'incorrect symmetry')
