@@ -139,9 +139,9 @@ class NWChem(ChemData):
         if 'FREQUENCIES' in self.calctype:
             from .vibrations import collect_frequencies
             collect_frequencies(self, f, indices)
-        if 'DIM' in self.calctype:
-            from .dim import collect_dim
-            collect_dim(self, f, indices)
+#        if 'DIM' in self.calctype:
+#            from .dim import collect_dim
+#            collect_dim(self, f, indices)
 
     def __collect_symmetry(self, f, indices):
         '''Collect the symmetry of the system, if it exists.'''
@@ -289,10 +289,13 @@ class NWChem(ChemData):
             self.energy['two-electron'] = float(f[ix+2].split('=')[-1].strip())
             self.energy['nuc. repulsion'] = float(f[ix+3].split('=')[-1].strip())
         if 'DIM' in self.calctype:
-            ix = indices['DIM/QM ENERGY'] + 2
-            self.energy['DIM el']  = float(f[ix].split('=')[-1].strip())
-            self.energy['DIM nuc'] = float(f[ix+1].split('=')[-1].strip())
-            self.energy['DIM total'] = float(f[ix+2].split('=')[-1].strip())
+            #ix = indices['DIM/QM ENERGY'] + 2
+            ix = indices['DIM/QM ENERGY'] + 1
+            #self.energy['DIM el']  = float(f[ix].split('=')[-1].strip())
+            #self.energy['DIM nuc'] = float(f[ix+1].split('=')[-1].strip())
+            #self.energy['DIM total'] = float(f[ix+2].split('=')[-1].strip())
+            self.energy['DIM total'] = float(f[ix].split(' ')[-1].strip())
+            #self.dimqm_energy = self.energy['DIM total']
             self.dimqm_energy = self.energy['DIM total']
 
         # For MP2 and coupled cluster calculations submitted through
