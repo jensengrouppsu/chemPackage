@@ -2,7 +2,7 @@ import unittest
 from chemPackage import collect
 import numpy as np
 from datetime import datetime, timedelta
-class TestNWClass(unittest.TestCase):
+class TestNWTech(unittest.TestCase):
     def setUp(self):
         self.test = collect('unitTests/nh3Freq.out')
 
