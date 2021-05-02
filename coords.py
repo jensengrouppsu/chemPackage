@@ -1322,3 +1322,29 @@ class Coordinates(object):
         distance = abs(answer)
 
         return distance
+
+    def cutCylinder(self, atomA, atomB, radius):
+        '''
+        calculates cylinder of the total system that has the dimensions
+        Length = atomB - atomA
+        radius = radius
+        and finds all atoms that exist within that cylinder.
+        Returns arrays of index and coordinates of the atoms in the cylinder
+        '''
+        import numpy as np
+
+        index = []
+        cylinder = []
+
+        #get points that will be used to create line
+        pointi = self.coordinates[atomA-1,:]
+        pointj = self.coordinates[atomB-1,:]
+        
+        for i, value in enumerate(self.atoms):
+            dist = self.dtoLine(pointi, pointj, self.coordinates[i,:])
+            if dist <= radius:
+                cylinder.append([self.coordinates[i,0], self.coordinates[i,1], self.coordinates[i,2]])
+                index.append(i+1)
+        cylinder = np.asarray(cylinder)
+        index = np.asarray(index)
+        return index, cylinder
