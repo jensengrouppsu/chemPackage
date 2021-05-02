@@ -341,5 +341,11 @@ class TestCoordFuncs(unittest.TestCase):
 
         self.assertEqual(answer, 2)
 
+    def test_cutCylinder(self):
+        f = collect('unitTests/sampleCoords.xyz')
+        cylinder = f.cutCylinder(4, 5, radius = 5.0)
+        answer = np.array([[0.0]])
+        np.testing.assert_array_almost_equal(cylinder, answer)
+
 if __name__ == '__main__':
     unittest.main()
