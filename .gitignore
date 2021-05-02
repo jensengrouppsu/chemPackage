@@ -10,3 +10,7 @@ __pycache__/chemdata.cpython-38.pyc
 nwchem/__pycache__/nwchem.cpython-38.pyc
 dim/*.pyc
 dim/__pycache__/*
+dressedT/__pycache__/*
+dressedT/*.pyc
+nwchem/__pycache__/*
+nwchem/*.pyc
