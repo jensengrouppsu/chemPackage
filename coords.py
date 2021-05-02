@@ -1335,7 +1335,7 @@ class Coordinates(object):
 
         index = []
         cylinder = []
-
+        atomType = []
         #get points that will be used to create line
         pointi = self.coordinates[atomA-1,:]
         pointj = self.coordinates[atomB-1,:]
@@ -1345,6 +1345,8 @@ class Coordinates(object):
             if dist <= radius:
                 cylinder.append([self.coordinates[i,0], self.coordinates[i,1], self.coordinates[i,2]])
                 index.append(i+1)
+                atomType.append(self.atoms[i])
         cylinder = np.asarray(cylinder)
         index = np.asarray(index)
-        return index, cylinder
+        atomType = np.asarray(atomType)
+        return index, atomType, cylinder
