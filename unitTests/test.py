@@ -332,14 +332,12 @@ class TestADFVib(unittest.TestCase):
 
 class TestCoordFuncs(unittest.TestCase):
 
-    def setUp(self):
-        self.c = Coordinates()
-
     def test_dtoLine(self):
+        f = Coordinates()
         a = np.array([0, 0, 0])
         b = np.array([0, 0, 5])
         c = np.array([2, 0, 0])
-        answer = self.c.dtoLine(a, b, c)
+        answer = f.dtoLine(a, b, c)
 
         self.assertEqual(answer, 2)
 
