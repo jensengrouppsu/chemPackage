@@ -3,6 +3,7 @@ from chemPackage import collect
 import numpy as np
 from datetime import datetime, timedelta
 from numpy.testing import assert_array_almost_equal
+from chemPackage.coords import Coordinates
 
 class TestNWClass(unittest.TestCase):
     def setUp(self):
@@ -328,6 +329,19 @@ class TestADFVib(unittest.TestCase):
         self.assertEqual(self.test.IR[0], 80.448586, 'incorrect first IR intensity')
         self.assertEqual(self.test.IR[1], 6.537245, 'incorrect second IR intensity')
         self.assertEqual(self.test.IR[2], 89.340161, 'incorrect third IR intensity')
+
+class TestCoordFuncs(unittest.TestCase):
+
+    def setUp(self):
+        self.c = Coordinates()
+
+    def test_dtoLine(self):
+        a = np.array([0, 0, 0])
+        b = np.array([0, 0, 5])
+        c = np.array([2, 0, 0])
+        answer = self.c.dtoLine(a, b, c)
+
+        self.assertEqual(answer, 2)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1292,3 +1292,33 @@ class Coordinates(object):
                   vectorwidth), file=fw)
 
         fw.close()
+
+    def dtoLine(self, pointA, pointB, pointC):
+        '''
+        calculate the distance of pointC from an infinite line
+        between pointB and pointA
+
+        all pointA, pointB, and pointC are numpy arrays of shape 3
+        returns distance
+
+        $latex \frac{| \vec{AC} \times \vec{AB} |}{| \vec{AB} |} $
+        this gives the height of a parallelogram created by sides AB and AC
+        this height, is a perpendicular line to the original line that passes through AB
+        '''
+        import numpy as np
+
+        vecAC = pointC - pointA
+        vecAB = pointB - pointA
+
+        num = np.cross(vecAC, vecAB)
+        denum = vecAB
+
+        # need magnitude of our vectors
+        #use square root of dot product of itself
+        num = np.sqrt(num.dot(num))
+        denum = np.sqrt(denum.dot(denum))
+
+        answer = num / denum
+        distance = abs(answer)
+
+        return distance
