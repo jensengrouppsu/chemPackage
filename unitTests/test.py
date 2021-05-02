@@ -345,24 +345,23 @@ class TestCoordFuncs(unittest.TestCase):
         f = collect('unitTests/sampleCoords.xyz')
         index, atomType, cylinder = f.cutCylinder(4, 5, radius = 5.0)
         answer = np.array([[0.0, 0.0, 0.0],
-                                 [0.75, 0.75, 0.0],
-                                 [-0.75, 0.75, 0.0],
-                                 [-5.0, 0.0, 0.0],
-                                 [5.0, 0.0, 0.0],
-                                 [7.0, 0.0, 0.0]
+                           [0.75, 0.75, 0.0],
+                           [-0.75, 0.75, 0.0],
+                           [0.0, 0.0, -5.0],
+                           [0.0, 0.0, 5.0]
                                                ])
         np.testing.assert_array_almost_equal(cylinder, answer)
 
     def test_cutCylinderIndex(self):
         f = collect('unitTests/sampleCoords.xyz')
         index, atomType, cylinder = f.cutCylinder(4, 5, radius = 5.0)
-        answer = np.array([1, 2, 3, 4, 5, 7])
+        answer = np.array([1, 2, 3, 4, 5])
         np.testing.assert_array_almost_equal(index, answer)
 
     def test_cutCylinderAtomType(self):
         f = collect('unitTests/sampleCoords.xyz')
         index, atomType, cylinder = f.cutCylinder(4, 5, radius = 5.0)
-        answer = np.array(['H', 'O', 'O', 'Ag', 'Ag', 'N'])
+        answer = np.array(['H', 'O', 'O', 'Ag', 'Ag'])
         np.testing.assert_array_equal(atomType, answer)
 
 if __name__ == '__main__':

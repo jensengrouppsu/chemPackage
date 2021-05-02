@@ -1330,6 +1330,9 @@ class Coordinates(object):
         radius = radius
         and finds all atoms that exist within that cylinder.
         Returns arrays of index and coordinates of the atoms in the cylinder
+
+        NOTE: it currently calculates assuming the points A and B are perfectly aligned
+                on the Z z-axis. Should be generalized for any system later
         '''
         import numpy as np
 
@@ -1343,9 +1346,10 @@ class Coordinates(object):
         for i, value in enumerate(self.atoms):
             dist = self.dtoLine(pointi, pointj, self.coordinates[i,:])
             if dist <= radius:
-                cylinder.append([self.coordinates[i,0], self.coordinates[i,1], self.coordinates[i,2]])
-                index.append(i+1)
-                atomType.append(self.atoms[i])
+                if pointi[2] <= self.coordinates[i,2] <= pointj[2]:
+                    cylinder.append([self.coordinates[i,0], self.coordinates[i,1], self.coordinates[i,2]])
+                    index.append(i+1)
+                    atomType.append(self.atoms[i])
         cylinder = np.asarray(cylinder)
         index = np.asarray(index)
         atomType = np.asarray(atomType)
