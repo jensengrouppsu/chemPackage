@@ -1,5 +1,5 @@
 # chemPackage
-Python package created to manipulate NWChem input and output files
+Python package created to manipulate NWChem and ADF input and output files along with plain XYZ files
 
 ## Dependencies
 As of now, the only dependency outside the normal realm of packages like numpy is *natsort*. This package can be found and installed through pip or conda
