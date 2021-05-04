@@ -56,7 +56,6 @@ def collect_frequencies(self, f, indices):
         # (hence the extra brackets) so that append will work
         # properly.
         s += 2
-        print(self.natoms)
         e = s + self.natoms
         m = array([[x.split()[1:4] for x in f[s:e]]],dtype=float)
         try:
