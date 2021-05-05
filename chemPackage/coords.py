@@ -1323,7 +1323,7 @@ class Coordinates(object):
 
         return distance
 
-    def cutCylinder(self, atomA, atomB, radius):
+    def cutCylinder(self, atomA, atomB, radius, dim=False):
         '''
         atomA and atomB are in python counting scheme starting at 0
         calculates cylinder of the total system that has the dimensions
@@ -1341,16 +1341,24 @@ class Coordinates(object):
         cylinder = []
         atomType = []
         #get points that will be used to create line
-        pointi = self.coordinates[atomA,:]
-        pointj = self.coordinates[atomB,:]
+        if not dim:
+            pointi = self.coordinates[atomA,:]
+            pointj = self.coordinates[atomB,:]
+            coords = self.coordinates
+            atoms = self.atoms
+        else:
+            pointi = self.dim_coordinates[atomA,:]
+            pointj = self.dim_coordinates[atomB,:]
+            coords = self.dim_coordinates
+            atoms = self.dim_atoms
         
-        for i, value in enumerate(self.atoms):
-            dist = self.dtoLine(pointi, pointj, self.coordinates[i,:])
+        for i, value in enumerate(atoms):
+            dist = self.dtoLine(pointi, pointj, coords[i,:])
             if dist <= radius:
-                if pointi[2] <= self.coordinates[i,2] <= pointj[2]:
-                    cylinder.append([self.coordinates[i,0], self.coordinates[i,1], self.coordinates[i,2]])
+                if pointi[2] <= coords[i,2] <= pointj[2]:
+                    cylinder.append([coords[i,0], coords[i,1], coords[i,2]])
                     index.append(i)
-                    atomType.append(self.atoms[i])
+                    atomType.append(atoms[i])
         cylinder = np.asarray(cylinder)
         index = np.asarray(index)
         atomType = np.asarray(atomType)
