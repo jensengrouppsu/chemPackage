@@ -1216,7 +1216,7 @@ def gaussian(x,y,z,dx,dy,dz,mr,bxr,byr,bzr,bxi,byi,bzi):
     fg[:,2,2,2]=ldz
     return field, fg
 
-def calc_field_from_point(dimdip, dimcoords, com, tr=None, debug=True, index=0,screenfac=1.0, polarization='ALL', gradient=True):
+def calc_field_from_point(dimdip, dimcoords, com, tr=None,  screenfac=1.0, polarization='ALL'):
     '''Calculates the local field at CoM from specified DIM atom'''
 
     from ..  import collect
@@ -1244,11 +1244,10 @@ def calc_field_from_point(dimdip, dimcoords, com, tr=None, debug=True, index=0,s
     R   = deepcopy(dimcoords[:])
     R   = array(R) * ANGSTROM2BOHR
     r   = array(com - R - tr, dtype=float)
-    r1  = sqrt((r**2).sum(axis=1))
+    r1  = sqrt((r**2).sum(axis=0))
     r2  = r1*r1
     r3  = r2*r1
     r5  = r3*r2
-    if gradient: r7  = r5*r2
 
     if screenfac == 1.0:
         screen = 3.3208 # this value is sqrt(1.447**2 + 1**2) converted to bohr (default)
@@ -1258,38 +1257,14 @@ def calc_field_from_point(dimdip, dimcoords, com, tr=None, debug=True, index=0,s
         screen = sqrt(7.4529 + ANGSTROM2BOHR(screenfac)**2) # use screenfac probe distance
     inr = 1. / screen
     s   = r1 * inr
-    sf0 = zeros((len(s)), dtype=float)
-    for i in range(len(sf0)):
-        sf0[i] = erf(s[i])
+    
+    sf0 = erf(s)
     sf1 = ( 2. * s / sqrt(pi) ) * exp(-s**2)
     sf2 = ( 4. * inr**3 / sqrt(pi) ) * exp(-s**2)
     sf  = sf0 - sf1
-    if gradient:
-        sf3 = ( 4. * s**2 / ( sqrt(pi) * r2 )) * exp(-s**2)
-        sf4 = ( 4. * s**3 / sqrt(pi) ) * exp(-s**2)
 
-    E = 3. * einsum('i,ib,ic,iac,i->ab', sf, r, r, dip, (1/r5))
-    E -= einsum('i,bc,iac,i', sf, dt, dip, (1/r3))
-    E -= einsum('i,ib,ic,iac,i', sf2, r, r, dip, (1/r2))
+    E = 3. * sf * (1/r5) * einsum('b,c,ac->ab', r, r, dip)
+    E -= sf * einsum('bc,ac', dt, dip) * (1/r3)
+    E -= sf2 * einsum('b,c,ac', r, r, dip) * (1/r2)
 
-    if gradient:
-        FG  = -15 * einsum('i,ib,ic,id,iad,i->abc', sf, r, r, r, dip, (1/r7))
-        FG += 3 * einsum('i,bc,id,iad,i->abc', sf, dt, r, dip, (1/r5))
-        FG += 3 * einsum('i,bd,ic,iad,i->abc', sf, dt, r, dip, (1/r5))
-        FG += 3 * einsum('i,cd,ib,iad,i->abc', sf, dt, r, dip, (1/r5))
-
-        FG += 3 * einsum('i,ib,ic,id,iad,i->abc', sf3, r, r, r, dip, (1/r5))
-        FG -= einsum('i,bc,id,iad,i->abc', sf3, dt, r, dip, (1/r3))
-
-        FG += 3 * einsum('i,ib,id,ic,iad,i->abc', sf3, r, r, r, dip, (1/r5))
-        FG -= einsum('i,bd,ic,iad,i->abc', sf3, dt, r, dip, (1/r3))
-
-        FG -= einsum('i,ib,cd,iad,i->abc', sf4, r, dt, dip, (1/r5))
-        FG -= einsum('i,ib,ic,id,iad,i->abc', sf4, r, r, r, dip, (1/r7))
-        FG += 2 * einsum('i,i,ib,ic,id,iad,i->abc', sf4, s**2, r, r, r, dip, (1/r7))
-
-    # return fields
-    if gradient:
-        return E, FG
-    else:
-        return E
+    return E
