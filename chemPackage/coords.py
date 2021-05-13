@@ -1355,6 +1355,8 @@ class Coordinates(object):
         for i, value in enumerate(atoms):
             if i % 3 != 0:
                 continue
+            if i > 45000:
+                continue
             dist1 = self.dtoLine(pointi, pointj, coords[i,:])
             dist2 = self.dtoLine(pointi, pointj, coords[i+1,:])
             dist3 = self.dtoLine(pointi, pointj, coords[i+2,:])
