@@ -1353,12 +1353,22 @@ class Coordinates(object):
             atoms = self.dim_atoms
         
         for i, value in enumerate(atoms):
-            dist = self.dtoLine(pointi, pointj, coords[i,:])
-            if dist <= radius:
+            if i % 3 != 0:
+                continue
+            dist1 = self.dtoLine(pointi, pointj, coords[i,:])
+            dist2 = self.dtoLine(pointi, pointj, coords[i+1,:])
+            dist3 = self.dtoLine(pointi, pointj, coords[i+2,:])
+            if (dist1 or dist2 or dist3) <= radius:
                 if pointi[2] <= coords[i,2] <= pointj[2]:
                     cylinder.append([coords[i,0], coords[i,1], coords[i,2]])
+                    cylinder.append([coords[i+1,0], coords[i+1,1], coords[i+1,2]])
+                    cylinder.append([coords[i+2,0], coords[i+2,1], coords[i+2,2]])
                     index.append(i)
+                    index.append(i+1)
+                    index.append(i+2)
                     atomType.append(atoms[i])
+                    atomType.append(atoms[i+1])
+                    atomType.append(atoms[i+2])
         cylinder = np.asarray(cylinder)
         index = np.asarray(index)
         atomType = np.asarray(atomType)
