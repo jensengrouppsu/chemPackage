@@ -10,6 +10,7 @@ setup(
     license='GPL v3.0',
     packages=['chemPackage',
               'chemPackage.adf',
+              'chemPackage.ams',
               'chemPackage.dim',
               'chemPackage.dressedT',
               'chemPackage.f2py',

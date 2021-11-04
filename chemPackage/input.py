@@ -29,6 +29,15 @@ class InputFiles(object):
                 e = next(i for i, x in enumerate(cap[s:], s) if 'END' in x)
             except StopIteration:
                 raise ChemDataError ('No END for ATOMS in template file.')
+        elif t.program == 'AMS':
+            try:
+                s = next(i for i, x in enumerate(cap) if 'ATOMS' in x) + 1
+            except StopIteration:
+                raise ChemDataError ('No ATOMS block in template file.')
+            try:
+                e = next(i for i, x in enumerate(cap[s:], s) if 'END' in x)
+            except StopIteration:
+                raise ChemDataError ('No END for ATOMS in template file.')
         elif t.program == 'NWChem':
             try:
                 s = next(i for i, x in enumerate(cap) if 'GEOMETRY' in x) + 1
@@ -59,9 +68,13 @@ class InputFiles(object):
             except StopIteration:
                 raise ChemDataError ('No end for geometry block in template file.')
 
+        print('s/e',s,e)
+
         # Make title format string here, in case it is needed later.
         if t.program == 'ADF':
             tstr = 'TITLE {0}'
+        if t.program == 'AMS':
+            tstr = ''
         elif t.program == 'NWChem':
             tstr = 'title "{0}"'
         elif t.program == 'Dalton':
@@ -117,13 +130,20 @@ class InputFiles(object):
             print(x, file=out)
 
         # If self has a title, but the template did not, add here
-        if ititle is None:
-            print(tstr.format(self.title), end='\n\n', file=out)
-            print(coordhead, file=out)
+        if t.program != 'AMS':
+            if ititle is None:
+                print(tstr.format(self.title), end='\n\n', file=out)
+                print(coordhead, file=out)
+        else:
+            if ititle is None:
+                print(coordhead, file=out)
+            
 
         # The coordinates
         if t.program == 'ADF':
             self.printCoords(mode='num', file=out, a1=a1, a2=a2)
+        if t.program == 'AMS':
+            self.printCoords(mode=None, file=out, a1=a1, a2=a2)
         elif t.program == 'NWChem':
             self.printCoords(file=out, a1=a1, a2=a2)
             if sym is not None: print(sym, file=out)

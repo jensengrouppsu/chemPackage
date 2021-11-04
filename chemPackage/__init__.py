@@ -56,6 +56,8 @@ def collect(file, raise_err=True, project='all'):
     # Raises IOError if doesn't exist.
     f = open(file).read()
     # Check if a keyword exists
+    ams_out = 'Amsterdam Modeling Suite' in f
+    ams_in = r'$AMSBIN/ams' in f
     adf_out = 'Amsterdam Density Functional' in f
     adf_in = r'$ADFBIN/adf' in f
     nwchem_out = 'Northwest Computational Chemistry Package' in f
@@ -83,6 +85,9 @@ def collect(file, raise_err=True, project='all'):
         if nwchem_out or nwchem_in:
             from .nwchem import NWChem
             d = NWChem(file)
+        elif ams_in or ams_out: 
+            from .ams import AMS
+            d = AMS(file)
         elif adf_out or adf_in:
             from .adf import ADF
             d = ADF(file)
