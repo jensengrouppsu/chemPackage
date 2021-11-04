@@ -283,7 +283,7 @@ class Excitations_MOs(object):
         print('\n', title.center(3 * len(title) - 2, '='), sep='', end='\n\n')
 
         # Define heading
-        if units is 'au':
+        if units == 'au':
             heading = ('\nEnergy (au)   Osc. Strength   Ex. Number   '
                    'Sym. Group   Wavelength (nm)\n')            
         else:
@@ -439,7 +439,7 @@ class Excitations_MOs(object):
         print('Rotatory strengths are given in 1E-40 esu^2 cm^2', end='\n\n')
 
         # Define heading
-        if units is 'au':
+        if units == 'au':
             heading = ('\nEnergy (au)   Rotatory Strength   Ex. Number   '
                    'Sym. Group   Wavelength (nm)\n')            
         else:
@@ -527,7 +527,7 @@ class Excitations_MOs(object):
         print('TPA strengths are given in a.u.', end='\n\n')
 
         # Define heading
-        if units is 'au':
+        if units == 'au':
             heading = ('\nEnergy (au)   Lin. TPA Strength   Cir. TPA Strength   '
                    'Ex. Number   Sym. Group\n')
         else:
@@ -615,7 +615,7 @@ class Excitations_MOs(object):
         print('3PA strengths are given in a.u.', end='\n\n')
 
         # Define heading
-        if units is 'au':
+        if units == 'au':
             heading = ('\nEnergy (au)   Lin. 3PA Strength   Cir. 3PA Strength   '
                    'Ex. Number   Sym. Group\n')
         else:

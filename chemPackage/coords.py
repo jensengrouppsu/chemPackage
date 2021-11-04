@@ -1377,7 +1377,6 @@ class Coordinates(object):
 
         NOTE: it currently calculates assuming the points A and B are perfectly aligned
                 on the Z z-axis. Should be generalized for any system later
-
                 This version of the function works specifically for the solvated
                 nanoparticle junction where DIM system has xyz coordinates in order
                 O H H O H H ... for all 45000 water atoms that come first
@@ -1398,7 +1397,6 @@ class Coordinates(object):
             pointj = self.dim_coordinates[atomB,:]
             coords = self.dim_coordinates
             atoms = self.dim_atoms
-
         for i, value in enumerate(atoms):
             if i % 3 != 0:
                 continue
@@ -1422,7 +1420,3 @@ class Coordinates(object):
         index = np.asarray(index)
         atomType = np.asarray(atomType)
         return index, atomType, cylinder
-
-
-
-

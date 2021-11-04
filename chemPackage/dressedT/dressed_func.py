@@ -1215,3 +1215,56 @@ def gaussian(x,y,z,dx,dy,dz,mr,bxr,byr,bzr,bxi,byi,bzi):
     fg[:,2,2,1]=ldy
     fg[:,2,2,2]=ldz
     return field, fg
+
+def calc_field_from_point(dimdip, dimcoords, com, tr=None,  screenfac=1.0, polarization='ALL'):
+    '''Calculates the local field at CoM from specified DIM atom'''
+
+    from ..  import collect
+    from ..constants import ANGSTROM2BOHR, KRONECKER3 as dt
+    from numpy import array, zeros, einsum, sqrt, pi, exp
+    from copy import deepcopy
+    from math import erf
+
+    # calculate the local field at the molecule's center of mass
+    if tr is None: tr = zeros((3)) # incase we need to translate the DIM system
+    
+    dip = dimdip
+    #dip = einsum('ijk->jik', dip)
+
+    # account for the requested incident polarization
+    pol = array([1.,1.,1.])
+    if not ('X' in polarization.upper() or polarization.upper() == 'ALL'):
+        pol[0] = 0.
+    if not ('Y' in polarization.upper() or polarization.upper() == 'ALL'):
+        pol[1] = 0.
+    if not ('Z' in polarization.upper() or polarization.upper() == 'ALL'):
+        pol[2] = 0.
+    dip = einsum('ij,i->ij', dip, pol)
+
+    R   = deepcopy(dimcoords[:])
+    R   = array(R) * ANGSTROM2BOHR
+    r   = array(com - R - tr, dtype=float)
+    r1  = sqrt((r**2).sum(axis=0))
+    r2  = r1*r1
+    r3  = r2*r1
+    r5  = r3*r2
+
+    if screenfac == 1.0:
+        screen = 3.3208 # this value is sqrt(1.447**2 + 1**2) converted to bohr (default)
+    elif screenfac is None:
+        screen = 1. # No screening
+    else:
+        screen = sqrt(7.4529 + ANGSTROM2BOHR(screenfac)**2) # use screenfac probe distance
+    inr = 1. / screen
+    s   = r1 * inr
+    
+    sf0 = erf(s)
+    sf1 = ( 2. * s / sqrt(pi) ) * exp(-s**2)
+    sf2 = ( 4. * inr**3 / sqrt(pi) ) * exp(-s**2)
+    sf  = sf0 - sf1
+
+    E = 3. * sf * (1/r5) * einsum('b,c,ac->ab', r, r, dip)
+    E -= sf * einsum('bc,ac', dt, dip) * (1/r3)
+    E -= sf2 * einsum('b,c,ac', r, r, dip) * (1/r2)
+
+    return E
