@@ -1,0 +1,6 @@
+syntax: glob
+
+*.pyc
+*.mod
+*.so
+*.o
