@@ -269,15 +269,28 @@ class NWChem(ChemData):
                 a = indices['RESTRICTED DFT']
             elif 'UNRESTRICTED' in self.calctype:
                 a = indices['UNRESTRICTED DFT ALPHA']
-            ix = next(i for i, x in renumerate(f[:a], a)
-                                        if 'Total iterative time' in x)
-            ix = ix - 9
-            self.energy['total DFT'] = float(f[ix].split('=')[-1].strip())
-            self.energy['one-electron'] = float(f[ix+1].split('=')[-1].strip())
-            self.energy['Coulomb'] = float(f[ix+2].split('=')[-1].strip())
-            self.energy['XC'] = float(f[ix+3].split('=')[-1].strip())
-            self.energy['nuc. repulsion'] = float(f[ix+4].split('=')[-1].strip())       
-            self.energy['total'] = self.energy['total DFT']
+            try: 
+                ix = next(i for i, x in renumerate(f[:a], a)
+                                            if 'Total iterative time' in x)
+                ix = ix - 9
+                self.energy['total DFT'] = float(f[ix].split('=')[-1].strip())
+                self.energy['one-electron'] = float(f[ix+1].split('=')[-1].strip())
+                self.energy['Coulomb'] = float(f[ix+2].split('=')[-1].strip())
+                self.energy['XC'] = float(f[ix+3].split('=')[-1].strip())
+                self.energy['nuc. repulsion'] = float(f[ix+4].split('=')[-1].strip())       
+                self.energy['total'] = self.energy['total DFT']
+
+            except ValueError:
+                ix = next(i for i, x in renumerate(f[:a], a)
+                                            if 'Total iterative time' in x)
+                ix = ix - 11
+                self.energy['total DFT'] = float(f[ix].split('=')[-1].strip())
+                self.energy['one-electron'] = float(f[ix+1].split('=')[-1].strip())
+                self.energy['Coulomb'] = float(f[ix+2].split('=')[-1].strip())
+                self.energy['XC'] = float(f[ix+3].split('=')[-1].strip())
+                self.energy['nuc. repulsion'] = float(f[ix+4].split('=')[-1].strip())       
+                self.energy['total'] = self.energy['total DFT']
+            
         elif 'HF' in self.calctype:
             if 'RESTRICTED' in self.calctype:
                 ix = indices['RESTRICTED HF ENERGIES']
