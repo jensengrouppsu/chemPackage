@@ -111,6 +111,21 @@ def read_file(self):
                 # AORESPONSE polarizability
                 ' POLARIZABILITY':
                                                                  ['AORESPONSE', 0],
+                # AORESPONSE Optical Rotation
+                ' OPTICAL ROTATION':
+                                                           ['OPTICAL ROTATION', 0],
+                # Dipole-Quadrupole Polarizabilities
+                ' DIPOLE-QUADRUPOLE POLARIZABILITY':
+                                                                   ['A-TENSOR', 8],
+                # Quad-Quad polarizability using new AORESPONSE routine
+                ' QUADRUPOLE-QUADRUPOLE POLARIZABILITY':
+                                                                   ['C-TENSOR', 8],
+                # Magnetic dipole-magnetic dipole polarizability (magnetizability)
+                ' MAGNETIZABILITY':
+                                                            ['MAGNETIZABILITY', 6],
+                # Linear response function (
+                ' CONDENSED LINEAR RESPONSE FUNCTION (MATRIX ELEMENTS)':
+                                                             ['LINEAR RESPONSE',3],
                 }
 
     # Loop over the file and find the index where each line appears
@@ -137,13 +152,6 @@ def read_file(self):
                     indices[each[line][0]] = []
                     indices[each[line][0]].append(i+each[line][1])
     
-
-   #print(indices)
-
-
-
     return f, indices
-
-
 
 

@@ -149,20 +149,18 @@ class Raman_IR(object):
             mname = 'mode' + '-'.join((num, 'm')) + '.out'
             pfile = os.path.join(dir, pname)
             mfile = os.path.join(dir, mname)
-            try:
-#------------------------- jbecca START --------------------------------
-#               p = collect(pfile,project='SERS')
-#               m = collect(mfile,project='SERS')
-#       reverted because this routine is also used for hpol, 
-#       which was broken thanks to this. Can be reimplemented
-#       when better thought out
-                p = collect(pfile) 
-                m = collect(mfile)
-                # For p/m files, SERS only needs a few attributes, not everything. --Pengchong, Nov. 2016                
-#------------------------ jbecca END -----------------------------------
+    
+            try: 
+                p = collect(pfile)
+            except IOError as e:
+                print("import error in file: ",pfile)
+                sys.exit(str(e))
+            try: 
                 m = collect(mfile)
             except IOError as e:
+                print("import error in file: ",mfile)
                 sys.exit(str(e))
+
 
             if excitation:
                 i, sym = excitation.split()
@@ -368,7 +366,7 @@ class Raman_IR(object):
                     #   print(round(self.v_frequencies[i],2),rnd(self.v_frequencies[i],2))
                     # Zhongwei: Fix the round-off issue
                     if (abs(round(self.v_frequencies[i], 2) - round(vfreq[j],2))
-                        <= 0.01 and degeneracy[i] == sindex):
+                        <= 0.015 and degeneracy[i] == sindex):
                     #if ((round(self.v_frequencies[i], 2) == round(vfreq[j], 2) or rnd(self.v_frequencies[i], 2) == rnd(vfreq[j], 2))
                     #    and degeneracy[i] == sindex):
                         break
@@ -821,10 +819,16 @@ class Raman_IR(object):
             mname = 'mode' + '-'.join((num, 'm')) + '.out'
             pfile = os.path.join(dir, pname)
             mfile = os.path.join(dir, mname)
-            try:
+
+            try: 
                 p = collect(pfile)
+            except IOError as e:
+                print("import error in file: ",pfile)
+                sys.exit(str(e))
+            try: 
                 m = collect(mfile)
             except IOError as e:
+                print("import error in file: ",mfile)
                 sys.exit(str(e))
 
             # Find the difference between the tensors
@@ -1013,8 +1017,10 @@ class Raman_IR(object):
                         sindex = 0
                     #if ((round(self.v_frequencies[i], 2) == round(vfreq[j], 2) or rnd(self.v_frequencies[i], 2) == rnd(vfreq[j], 2))
                     #    and degeneracy[i] == sindex):
+                  # if (abs(round(self.v_frequencies[i], 2) - round(vfreq[j],2))
+                  #     <= 0.01 and degeneracy[i] == sindex):
                     if (abs(round(self.v_frequencies[i], 2) - round(vfreq[j],2))
-                        <= 0.01 and degeneracy[i] == sindex):
+                        <= 0.015 and degeneracy[i] == sindex):
                         break
                     else:
                         pass

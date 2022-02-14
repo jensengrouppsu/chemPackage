@@ -329,6 +329,7 @@ attrlist = (
     'beta_qqd',
     'beta_qqq',
     'project', # added to save time for TERS - Pengchong, Nov. 2016
+    'linresp',
     'basis',
 )
 

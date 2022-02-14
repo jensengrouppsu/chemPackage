@@ -76,6 +76,7 @@ class AMS(ChemData):
             # Read in file
             from .read_file import read_file
             f, indices = read_file(self)
+    
 
             if self.filetype != 'out': return
             
@@ -98,8 +99,29 @@ class AMS(ChemData):
                 from .polarizability import collect_polarizability
                 collect_polarizability(self, f, indices)
 
+            # Collect G-Tensor
+            if 'OPTICAL ROTATION' in indices:
+                from .polarizability import collect_opticalrotation
+                collect_opticalrotation(self, f, indices)
             
+            # Collect A-Tensor
+            if 'A-TENSOR' in indices:
+                from .polarizability import collect_atensor
+                collect_atensor(self, f, indices)
 
+            # Collect C-Tensor 
+            if 'C-TENSOR' in indices:
+                from .polarizability import collect_ctensor
+                collect_ctensor(self, f, indices)
 
+            # Collecct magnetizability
+            if 'MAGNETIZABILITY' in indices:
+                from .polarizability import collect_magnetizability
+                collect_magnetizability(self, f, indices)
+
+            # collect linear response
+            if "LINEAR RESPONSE" in indices:
+                from .polarizability import collect_linearresponse
+                collect_linearresponse(self, f, indices)
 
 
