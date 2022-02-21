@@ -20,6 +20,7 @@ def compile_target(target, clean=False, silent=False):
     '''
     from subprocess import call
     from os import devnull
+    print(target, clean, silent)
     if clean:
         command = ['make clean', target]
         if silent:
@@ -29,6 +30,7 @@ def compile_target(target, clean=False, silent=False):
             print('Calling command:', ' '.join(command))
             retcode = call(command)
     command = ['make', target]
+    print(command)
     if silent:
         with open(devnull, 'w') as dev_null:
             retcode = call(command, stdout=dev_null, stderr=dev_null)
@@ -70,16 +72,32 @@ def compile_on_fly(dirname, target, clean=False, silent=True):
     from .files import abs_file_path
 
     # Search your pythonpath for folder where the files are kept
-    pythonpath = environ['PYTHONPATH'].split(pathsep)
-    location = ''
-    for p in pythonpath:
-        temp = path_join(p, dirname)
+    try:
+        pythonpath = environ['PYTHONPATH'].split(pathsep)
+        location = ''
+        for p in pythonpath:
+            temp = path_join(p, dirname)
+            # If it exists and is a directory, then save it
+            if exists(temp) and isdir(temp):
+                location = path_join(p, dirname)
+                break
+    except KeyError:
+        location = ''
+
+
+    if not location:
+        # try the default anaconda install directory
+        import glob
+        condapath = environ['CONDA_PREFIX']
+        temp = glob.glob(path_join(condapath,'lib/python*'))
+        condapath = path_join(temp[0],'site-packages')
+        temp = path_join(condapath, dirname)
+
         # If it exists and is a directory, then save it
         if exists(temp) and isdir(temp):
-            location = path_join(p, dirname)
-            break
-    if not location:
-        raise ImportError ('Cannot find '+dirname)
+            location = path_join(condapath, dirname)
+        else:
+            raise ImportError ('Cannot find '+dirname)
 
     # Store the current directory then change to f2py directory
     d = abs_file_path(curdir)

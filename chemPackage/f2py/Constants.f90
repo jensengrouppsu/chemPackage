@@ -9,6 +9,7 @@ Module Constants
    REAL(KINDR),    Parameter :: SQRTPI      = 1.7724538509055159_KINDR
    Real(KINDR),    Parameter :: HBAR        = 6.5821189916e-16_KINDR !units = eV s
    Real(KINDR),    Parameter :: nm2eV       = 1239.0_KINDR
+   Real(KINDR),    Parameter :: hart2nm     = 45.56335_KINDR
 
    Real(KINDR),    Parameter :: ZERO        =  0.0e0_KINDR
    Real(KINDR),    Parameter :: ONE         =  1.0e0_KINDR
@@ -53,5 +54,8 @@ Module Constants
    Complex(KINDR), Parameter :: FIVE_C  = CMPLX(FIVE,  ZERO, KINDR)
    Complex(KINDR), Parameter :: SIX_C   = CMPLX(SIX,   ZERO, KINDR)
    Complex(KINDR), Parameter :: HALF_C  = CMPLX(HALF,  ZERO, KINDR)
+
+   Real(KINDR),    Parameter :: LIGHT_AU      = 137.035999074 ! speed of light in au  
+   Real(KINDR),    Parameter :: TWOINVSQRTPI  = TWO / SQRTPI
 
 End Module Constants

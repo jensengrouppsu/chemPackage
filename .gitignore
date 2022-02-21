@@ -14,3 +14,6 @@ dressedT/__pycache__/*
 dressedT/*.pyc
 nwchem/__pycache__/*
 nwchem/*.pyc
+f2py/*.o
+f2py/*.mod
+f2py/*.so

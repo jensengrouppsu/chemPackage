@@ -54,7 +54,9 @@ def collect(file, raise_err=True, project='all'):
 
     # Perform tests up front.  Load file into memory to search fast
     # Raises IOError if doesn't exist.
-    f = open(file).read()
+    fIn = open(file)
+    f = fIn.read()
+    fIn.close()
     # Check if a keyword exists
     ams_out = 'Amsterdam Modeling Suite' in f
     ams_in = r'$AMSBIN/ams' in f
