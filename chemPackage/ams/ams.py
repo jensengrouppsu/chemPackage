@@ -94,6 +94,11 @@ class AMS(ChemData):
                 collect_frequencies(self, f, indices)
                 self.calctype.add('FREQUENCIES')
 
+            if "MBH" in indices:
+                from .vibrations import collect_frequencies_mbh
+                collect_frequencies_mbh(self, f, indices)
+                self.calctype.add('FREQUENCIES')
+
             # Collect polarizability
             if 'AORESPONSE' in indices:
                 from .polarizability import collect_polarizability

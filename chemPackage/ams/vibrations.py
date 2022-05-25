@@ -81,7 +81,47 @@ def collect_frequencies(self, f, indices):
     
 
     
+def collect_frequencies_mbh(self, f, indices):
+    from ..constants import BOHR2ANGSTROM as B2A
+    from numpy.linalg import norm
+    import numpy as np
+
+    if 'MBH' in indices:
+        s = indices['MBH']
+    else:
+        self._raise_or_pass('Error locating the normal mode tables')
+        return
+    if 'MBH END'  in indices:
+        e = indices['MBH END']
+    else:
+        self._raise_or_pass('Error locating the end of the normal mode table')
+        return
+
+    self.IR = array([], float)
+    self.v_frequencies = array([], dtype=float)
+    for i in range(s, e):
+        if 'Index' in f[i] and 'Frequency' in f[i] and 'Intensity' in f[i]: ## normal modes, not mass weighted, in Bohr
+            ln = f[i].split()[4]
+            ir = f[i].strip('\n').split()[7]
+            self.v_frequencies = append(self.v_frequencies, float(ln))
+            self.IR = append(self.IR, float(ir))
+    
 
 
+    self.nmodes = len(self.v_frequencies)
+    self.normal_modes = np.zeros((self.nmodes, self.natoms, 3))
+    ii = 0
+    for i in range(s, e):
+        if 'Index' in f[i] and 'Frequency' in f[i] and 'Intensity' in f[i]: ## normal modes, not mass weighted, in Bohr
+            for j in range(self.natoms):
+                self.normal_modes[ii][j][0] = float(f[i+1+j].strip('\n').split()[-3])
+                self.normal_modes[ii][j][1] = float(f[i+1+j].strip('\n').split()[-2])
+                self.normal_modes[ii][j][2] = float(f[i+1+j].strip('\n').split()[-1])
+            ii += 1
+
+
+    for i in range(self.nmodes):
+        self.normal_modes[i] *= B2A / norm(self.normal_modes[i].flatten())
+ 
 
 

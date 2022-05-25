@@ -68,6 +68,12 @@ def read_file(self):
                 # Analytical frequencies
                 '=== CALCULATE ANALYTICAL SECOND DERIVATIVES OF THE ENERGY ===':
                                                      ['ANALYTICAL FREQUENCIES', 0],
+                # Normal modes calculated using mobile block hessian
+                ' Block Normal Modes (including rigid motions)':
+                                                                        ['MBH', 2],
+                '     CALCULATION RESULTS':
+                                                                   ['MBH END', -4]
+
                 }
         last =  {
                 #############
