@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 
-def dressed_spectroscopy(obj, r=None, debug=False, gradient=False, spectrum='Raman',
+def dressed_spectroscopy(obj, r=None, debug=False, gradient=False, magnetic=False, spectrum='Raman',
     ws=False, lplot=True,  **kwargs):
     '''
     Calculates the specified spectrum from a given ChemData object "obj".
@@ -19,6 +19,7 @@ def dressed_spectroscopy(obj, r=None, debug=False, gradient=False, spectrum='Ram
                   r describes the separation of the molecule from the center of the
                   sphere and |r| is the radius of the sphere.
     gradient  ==> Whether to use field-gradient effects (default False).
+    magnetic  ==> Whether to use magnetic field effects (default False)
     debug     ==> Turn on print statements.
     spectrum  ==> Specify type of spectrum to be plotted (may be one of
                   "Raman" - default, "ROA", "CID", "CARS", or "hyperRaman").
@@ -82,8 +83,10 @@ def dressed_spectroscopy(obj, r=None, debug=False, gradient=False, spectrum='Ram
 
     # Generate Fields
     E = rkwargs('E', zeros((3,3)), **kwargs)
+    B = rkwargs('B', zeros((3,3)), **kwargs)
     FG = rkwargs('FG', zeros((3,3,3)), **kwargs)
     Es = rkwargs('Es', None, **kwargs)
+    Bs = rkwargs('Bs', None, **kwargs)
     FGs = rkwargs('FGs', None, **kwargs)
     # Zhongwei: field and field-gradient for 2\omega
     E2 = rkwargs('E2', zeros((3,3)), **kwargs)
@@ -112,7 +115,11 @@ def dressed_spectroscopy(obj, r=None, debug=False, gradient=False, spectrum='Ram
     # Build dressed-tensors
     if (spectrum=='RAMAN' or spectrum=='NRS' or spectrum=='SERS'
         or spectrum=='CARS' or spectrum=='SECARS'):
-        aD = dress_alpha(obj, E, FG, gradient=gradient, Es=Es, FGs=FGs)
+        print( "hello my dudes")
+        if magnetic:
+            aD = dress_alpha_plus_mag(obj, E, B, FG, gradient=gradient, magnetic=magnetic, Es=Es, Bs=Bs, FGs=FGs)
+        else:
+            aD = dress_alpha(obj, E, FG, gradient=gradient, Es=Es, FGs=FGs)
     if (spectrum=='HYPERRAMAN' or spectrum=='HSERS' or spectrum=='HRS'):
         #Zhongwei: include E2 and FG2 for hyper-SERS 
         BD = dress_hyperRaman_beta(obj, E, FG, E2, FG2, gradient=gradient)
@@ -152,6 +159,7 @@ def dressed_spectroscopy(obj, r=None, debug=False, gradient=False, spectrum='Ram
             intensity, sers = unrestricted_ROA(aD, AD, GD, obj.e_frequencies, AsD, GsD,
                                                debug=debug, spectrum=spectrum, **kwargs)
         else:
+            print("maybe i'm here?")
             intensity, sers = ROA_intensity(aD, AD, GD, obj.e_frequencies, debug=debug,
                                             spectrum=spectrum, **kwargs)
 
@@ -471,6 +479,49 @@ def dress_alpha(obj, E, FG, gradient=False, Es=None, FGs=None):
         except ValueError:
             exit('ERROR: A- and C-tensors are needed for field-gradient effects!')
     return aD
+
+def dress_alpha_plus_mag(obj, E, B, FG, gradient=False, magnetic=False, Es=None, Bs=None, FGs=None):
+    '''Dress the polarzability tensor with E and FG.'''
+    from numpy import einsum, zeros
+    from sys import exit
+    from copy import deepcopy
+    if Es is None: Es = deepcopy(E)
+    if Bs is None: Bs = deepcopy(B)
+    if FGs is None: FGs = deepcopy(FG)
+    st1 = ''
+    if E.ndim == 3 and FG.ndim == 4: st1 = 'i'
+    st2 = ''
+    if Es.ndim==3 and FGs.ndim==4: st2 = 'i'
+    print( st1, st2, E.ndim, FG.ndim, obj.polarizability.ndim)
+    #print( obj.polarizability)
+    aD  = einsum('{1}ac,icd,{0}bd->iab'.format(st1,st2), Es, obj.polarizability, E)
+    #########################################################################
+    # Zhongwei: print out the \alpha components values for analyzing the
+    # orientation information from SERS
+    #for i in range(len(aD)):
+    #    print ('Mode:', obj.v_frequencies[i])
+    #    for j in range(3):
+    #        for k in range(3):
+    #            print (j,k,aD[i][j][k].real,aD[i][j][k].imag)
+    #    print ('-----------------------------------------------------------')
+    #########################################################################
+    if gradient:
+        try:
+            aD += (1./3.) * einsum('{1}ac,icde,{0}bde->iab'.format(st1,st2), Es, obj.atensor, FG)
+            aD += (1./3.) * einsum('{1}acd,iecd,{0}be->iab'.format(st1,st2), FGs, obj.atensor, E)
+            aD += (1./9.) * einsum('{1}acd,icdeg,{0}beg->iab'.format(st1,st2), FGs, obj.ctensor, FG)
+        except ValueError:
+            exit('ERROR: A- and C-tensors are needed for field-gradient effects!')
+    if magnetic:
+        try:
+            aD +=  einsum('{1}ac,icd,{0}bd->iab'.format(st1,st2), Es, obj.gtensor, B)
+            aD +=  einsum('{1}ac,icd,{0}bd->iab'.format(st1,st2), Bs, obj.gtensor, E)
+        except ValueError:
+            exit('ERROR: G-tensor is needed for magnetic field effects!')
+
+    return aD
+
+
 
 def dress_A(obj, E, FG, gradient=False):
     '''Dress the A-tensor with E and FG.'''

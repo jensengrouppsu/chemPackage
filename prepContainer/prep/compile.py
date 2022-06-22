@@ -20,7 +20,7 @@ def compile_target(target, clean=False, silent=False):
     '''
     from subprocess import call
     from os import devnull
-    print(target, clean, silent)
+
     if clean:
         command = ['make clean', target]
         if silent:
@@ -30,7 +30,6 @@ def compile_target(target, clean=False, silent=False):
             print('Calling command:', ' '.join(command))
             retcode = call(command)
     command = ['make', target]
-    print(command)
     if silent:
         with open(devnull, 'w') as dev_null:
             retcode = call(command, stdout=dev_null, stderr=dev_null)

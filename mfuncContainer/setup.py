@@ -10,6 +10,7 @@ setup(
     license='GPL v3.0',
     packages=['mfunc'],
 
+    include_package_data=True,
     install_requires=['numpy',
                       'scipy'],
     classifiers=['Development Status :: 1 - Planning',
