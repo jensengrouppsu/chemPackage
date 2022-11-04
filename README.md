@@ -5,6 +5,9 @@ installation of the package is done from the master directory through pip by run
     
     pip install .
 
+The chemPackage is dependent on prep and mfunc, to install them run the previous command in both prepContainer and mfuncContainer.
+
+
 ## Dependencies
 As of now, the only dependency outside the normal realm of packages like numpy is *natsort*. This package can be found and installed through pip or conda.
 
