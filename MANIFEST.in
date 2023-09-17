@@ -1,1 +1,6 @@
-include chemPackage/f2py/*
+include src/chemPackage/f2py/*.so
+include src/chemPackage/f2py/*.o
+include src/chemPackage/f2py/*.mod
+include src/mfunc/*.so
+include src/mfunc/*.mod
+include src/mfunc/*.o
