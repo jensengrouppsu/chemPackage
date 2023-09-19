@@ -77,6 +77,10 @@ class AMS(ChemData):
             from .read_file import read_file
             f, indices = read_file(self)
     
+            # Collect input block
+            if 'INPUT START' in indices:
+                from .input_block import collect_input
+                collect_input(self, f, indices)
 
             if self.filetype != 'out': return
             
