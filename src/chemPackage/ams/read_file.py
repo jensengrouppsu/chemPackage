@@ -47,9 +47,12 @@ def read_file(self):
                 ##########
 
                 # Initial geometry
-                ' =====                            X Y Z'
-                '                    CHARGE':
-                                                           ['INITIAL GEOMETRY', 3],
+                # ' =====                            X Y Z'
+                # '                    CHARGE':
+                #                                            ['INITIAL GEOMETRY', 3],
+            # Unified geometry initial geometry reading
+                'Geometry':
+                                                           ['INITIAL GEOMETRY', 5],
 
                 #########################
                 # Vibrational frequencies

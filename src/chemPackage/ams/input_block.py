@@ -194,6 +194,8 @@ def __determine_subkeys(self, k, s, e, search):
     elif k == 'EXCITATION':
         if next((x for x in search[s:e] if 'EXACT' in x), False):
             self.subkey.add('EXACT')
+        if next((x for x in search[s:e] if 'TD-DFTB' in x), False):
+            self.subkey.add('TD-DFT+TB')
     elif k == 'DIMQM':
         if next((x for x in search[s:e] if 'CPIM' in x), False):
             self.subkey.add('CPIM')
