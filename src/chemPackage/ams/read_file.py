@@ -75,7 +75,22 @@ def read_file(self):
                 ' Block Normal Modes (including rigid motions)':
                                                                         ['MBH', 2],
                 '     CALCULATION RESULTS':
-                                                                   ['MBH END', -4]
+                                                                   ['MBH END', -4],
+                #############
+                # Excitations
+                #############
+                # End of the excitation parts
+                ' Normal termination of EXCITATION program part':
+                                                            ['EXCITATIONS END', 0],
+                # Unrestricted excitations
+                ' All SPIN-UNRESTRICTED excitation energies':
+                                                          ['SPIN-UNRESTRICTED', 4],
+                # Singlet-singlet excitations
+                ' All SINGLET-SINGLET excitation energies': 
+                                                            ['SINGLET-SINGLET', 4],
+                # Singlet-triplet excitations
+                ' All SINGLET-TRIPLET excitation energies': 
+                                                            ['SINGLET-TRIPLET', 4],
 
                 }
         last =  {
@@ -135,6 +150,23 @@ def read_file(self):
                 # Linear response function (
                 ' CONDENSED LINEAR RESPONSE FUNCTION (MATRIX ELEMENTS)':
                                                              ['LINEAR RESPONSE',3],
+                #############
+                # Excitations
+                #############
+
+                # Transition dipole moments
+                ' no.  E/eV          f                       mu (x,y,z)':
+                                                                        ['TDM', 2],
+                # Excitations energies calculated with exact algorithm
+                '    Nr          Excitation energy             '
+                'Oscillator Strength':
+                                                          ['EXACT EXCITATIONS', 2],
+                # Excitations energies calculated with Davidson algorithm
+                ' no.  E/a.u.        E/eV      f           dE/a.u.':
+                                                       ['DAVIDSON EXCITATIONS', 2],
+                # Transitions in the excitations
+                ' Major MO -> MO transitions for the above excitations':
+                                                                ['TRANSITIONS', 5],
                 }
 
     # Loop over the file and find the index where each line appears

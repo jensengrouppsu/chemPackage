@@ -1,14 +1,9 @@
-from __future__ import print_function, division
-import re
-from numpy import array, append, arange
-from numpy import zeros, vectorize, argsort
 import numpy as np
-# deprcatated
-# from numpy import fastCopyAndTranspose as fcat
-from numpy import where, isnan
-from numpy.core.records import fromarrays
+import re
 from ..f2py import find_equal
 from ..constants import EV2HART
+
+# Mapped from adf/excitations.py
 
 def collect_excitations(self, f, indices):
     '''Collect excitations.'''
@@ -17,6 +12,7 @@ def collect_excitations(self, f, indices):
         __collect_excitations_block(self, f, indices)
     except IndexError:
         self._raise_or_pass('Error locating excitation blocks')
+
     else:
 
         # Find and match the transition dipole moments
@@ -45,7 +41,7 @@ def collect_excited_state(self, f, indices):
         e = next(i for i, x in enumerate(f[s:], s) if not x.strip())
         # Collect the block
         self.es_gradient['total TDDFT gradient'] = (
-            array([x.split()[2:5] for x in f[s:e]],dtype=float))
+            np.array([x.split()[2:5] for x in f[s:e]],dtype=float))
     else:
         self._raise_or_pass('Error locating excited state gradients')
 
@@ -53,7 +49,7 @@ def collect_excited_state(self, f, indices):
     if 'GEOMETRY' in self.calctype:
         if 'EXCITED STATE DIPOLE' in indices:
             ix = indices['EXCITED STATE DIPOLE']
-            self.es_dipole = array(f[ix].split()[5:8], dtype=float)
+            self.es_dipole = np.array(f[ix].split()[5:8], dtype=float)
         else:
             self._raise_or_pass('Error locating excited state dipole moment')
 
@@ -74,7 +70,6 @@ def collect_excited_state(self, f, indices):
             self._raise_or_pass('Error locating excitation blocks')
     else:
         self._raise_or_pass('Error locating the end of the excitation block')
-
 
 def __collect_excitations_block(self, f, indices):
     '''Collect excitations from the excitations block..'''
@@ -135,15 +130,14 @@ def __collect_excitations_block(self, f, indices):
 
     # Now, place them in order of increasing energy
     self.nexcite = len(een)
-    index = argsort(array(een))
-    self.excitation_energies = array(een)[index]
-    self.oscillator_strengths = array(osc)[index]
-    self.excitation_symmetries = array(sym)[index]
-    self.excitation_type = array(lab)[index]
+    index = np.argsort(np.array(een))
+    self.excitation_energies   = np.array(een)[index]
+    self.oscillator_strengths  = np.array(osc)[index]
+    self.excitation_symmetries = np.array(sym)[index]
+    self.excitation_type       = np.array(lab)[index]
 
     # Make a private index for excitations
-    self._excite_index = arange(self.nexcite, dtype=int)
-
+    self._excite_index = np.arange(self.nexcite, dtype=int)
 
 def __match_TDM(self, f, indices):
     '''Find and match the transition dipole moments to the excitations.'''
@@ -172,15 +166,15 @@ def __match_TDM(self, f, indices):
         return
 
     # Find all the transition dipole moments.  There may not be any
-    TDM = array([])
+    TDM = np.array([])
     for s in ar:
         e = next(i for i, x in enumerate(f[s:], s) if not x.strip())
-        tp = array([ln.split()[1:6] for ln in f[s:e]], dtype=float)
-        TDM = append(TDM, tp.flatten())
+        tp = np.array([ln.split()[1:6] for ln in f[s:e]], dtype=float)
+        TDM = np.append(TDM, tp.flatten())
     TDM = TDM.reshape(-1,5)
 
     # Default TDM to zero == test_line else False
-    self.TDM = zeros((self.nexcite, 3), dtype=float)
+    self.TDM = np.zeros((self.nexcite, 3), dtype=float)
 
     # Match up the TDM to the excitations.
     # If none were found, then all were weak
@@ -195,7 +189,6 @@ def __match_TDM(self, f, indices):
         for i, ix in enumerate(indx):
             if ix == -1: continue
             self.TDM[i] = TDM[ix,2:5]
-
 
 def __collect_transitions(self, f, indices):
     '''Find and collect the restricted transitions, then match them to
@@ -214,7 +207,7 @@ def __collect_transitions(self, f, indices):
         '''Function to format trans sym groups.'''
         m = re.search(r'(\d+)(.*)', x)
         return m.group(1)+' '+__symchange(m.group(2).capitalize())
-    trans_sym = vectorize(tsym)
+    trans_sym = np.vectorize(tsym)
 
     def tbend(x, y, z):
         '''Function to determine the end of a transition block.'''
@@ -257,17 +250,17 @@ def __collect_transitions(self, f, indices):
 
     # Loop over each transition block
     trans = []
-    en  = array([], dtype=float)
-    osc = array([], dtype=float)
+    en  = np.array([], dtype=float)
+    osc = np.array([], dtype=float)
 
     for ix in ar:
 
         # Collect osc strength and energy that corresponds to each transition
         s = ix[0]
         e = next(i for i,x in enumerate(f[s:], s) if not x.strip())
-        tp = array([ln.split() for ln in f[s:e]])
-        en = append(en, array(tp[:,1], dtype=float))
-        osc = append(osc, array(tp[:,3], dtype=float))
+        tp  = np.array([ln.split() for ln in f[s:e]])
+        en  = np.append(en,  np.array(tp[:,1], dtype=float))
+        osc = np.append(osc, np.array(tp[:,3], dtype=float))
 
         # Collect the transitions themselves
         # First Line of this transition block
@@ -304,18 +297,18 @@ def __collect_transitions(self, f, indices):
                 ar.append(tp)
 
             # Store in the correct locations
-            ar = array(ar)
+            ar = np.array(ar)
             add = 1 if 'UNRESTRICTED' in self.calctype else 0
             occ = trans_sym(ar[:,1+add])
             unocc = trans_sym(ar[:,3+add])
-            pcent = array(ar[:,4+add], dtype=float)
+            pcent = np.array(ar[:,4+add], dtype=float)
             # Spin is 1 for alpha, 2 for beta, or 0 for restricted
             if 'UNRESTRICTED' in self.calctype:
-                spin = array([{ 'Alph' : 1, 'Beta' : 2 }[x] for x in ar[:,1]])
+                spin = np.array([{ 'Alph' : 1, 'Beta' : 2 }[x] for x in ar[:,1]])
             else:
-                spin = zeros(len(ar[:]), dtype=int)
+                spin = np.zeros(len(ar[:]), dtype=int)
             # Add trans as a record array - numpy equivalent to dictionary
-            trans.append(fromarrays([occ, unocc, pcent, spin],
+            trans.append(np.core.records.fromarrays([occ, unocc, pcent, spin],
                                     names='occ,unocc,pcent,spin'))
 
     # Now match the transitions to the excitations
@@ -331,7 +324,6 @@ def __collect_transitions(self, f, indices):
     except IndexError:
         pass
 
-
 def __symchange(sym):
     '''Function to standardize the summetry group.'''
     m = re.match(r"([A-Z])(\d?)('*)$", sym)
@@ -343,23 +335,24 @@ def __symchange(sym):
 def collect_fdec_excitations(self, f, indices):
     '''Collects the excitations and transition dipoles from an FDEc
     subsystem excitation calculation.'''
+    print("Currently collect_fdec_excitations is in unkown status")
 
     if 'FDEC ENERGIES' in indices:
-        tempe = array([], dtype=float)
-        tempt = array([], dtype=float)
+        tempe = np.array([], dtype=float)
+        tempt = np.array([], dtype=float)
         ar = indices['FDEC ENERGIES']
         for ix in ar:
             for i in range(ix,len(f)):
                 line = f[i]
                 if line=='': break
                 if len(line.split()) == 3:
-                    tempe = append(tempe, line.split()[1])
-                    tempt = append(tempt, line.split()[2])
-        self.excitation_energies = EV2HART(array(tempe, dtype=float))
-        self.oscillator_strengths = array(tempt, dtype=float)
+                    tempe = np.append(tempe, line.split()[1])
+                    tempt = np.append(tempt, line.split()[2])
+        self.excitation_energies = EV2HART(np.array(tempe, dtype=float))
+        self.oscillator_strengths = np.array(tempt, dtype=float)
 
         # change NaN to 0.
-        indx = where(isnan(self.excitation_energies))
+        indx = np.where(np.isnan(self.excitation_energies))
         self.excitation_energies[indx] = 0.
-        indx = where(isnan(self.oscillator_strengths))
+        indx = np.where(np.isnan(self.oscillator_strengths))
         self.oscillator_strengths[indx] = 0.

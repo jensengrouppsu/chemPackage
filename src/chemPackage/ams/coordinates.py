@@ -7,16 +7,19 @@ def collect_geometry(self, f, indices):
     '''
 
     # The coordinates are printed at the top of the output file
-    if 'INITIAL GEOMETRY' in indices or 'INITIAL GEOMETRY COSMO' in indices:    
+    if 'INITIAL GEOMETRY' in indices:
+        # or 'INITIAL GEOMETRY COSMO' in indices:    
         # For some reason, the initial geometry in COSMO is printed differently
-        if 'INITIAL GEOMETRY' in indices:
-            s = indices['INITIAL GEOMETRY']
-        else:
-            s = indices['INITIAL GEOMETRY COSMO']
+        # if 'INITIAL GEOMETRY' in indices:
+        #     s = indices['INITIAL GEOMETRY']
+        # else:
+        #     s = indices['INITIAL GEOMETRY COSMO']
 
+        # Geometry reading compatible with DFTB engine
+        s = indices['INITIAL GEOMETRY']
         # find number of atoms in system
         natoms = 0
-        while len(f[s+natoms].split()) == 8:
+        while len(f[s+natoms].split()) >= 5:
             natoms = natoms+ 1
         self.natoms = natoms
         # Go to end of block
@@ -26,8 +29,8 @@ def collect_geometry(self, f, indices):
             self._raise_or_pass('Error collecting initial geometry block')
             return
         # Elements 2, 3, and 4 are the X, Y, and Z coordinates
-        self.coordinates = array([x.split()[2:5] for x in f[s:e]],dtype=float)
-        self.atoms = array([x.split()[1] for x in f[s:e]])
+        self.coordinates = np.array([x.split()[2:5] for x in f[s:e]],dtype=float)
+        self.atoms = np.array([x.split()[1] for x in f[s:e]])
         # Store these as initial geometry as well
         self.initial_geometry = self.coordinates.copy()
     else:
@@ -50,13 +53,13 @@ def collect_optimized_geometry(self, f, indices):
             self._raise_or_pass('Error collecting optimized geometry block')
             return
         # Elements 5, 6 and 7 are the X, Y, and Z coordinates
-        self.initial_geometry = array([x.split()[2:5] for x in f[s:e]], dtype=float)
+        self.initial_geometry = np.array([x.split()[2:5] for x in f[s:e]], dtype=float)
 
         # Final geometry
         s = indices['OPTIMIZED GEOMETRY'][-1]
         e = s + self.natoms
         # Elements 5, 6 and 7 are the X, Y, and Z coordinates
-        self.coordinates = array([x.split()[2:5] for x in f[s:e]],dtype=float)
+        self.coordinates = np.array([x.split()[2:5] for x in f[s:e]],dtype=float)
     else:
         self._raise_or_pass('Error locating optimized geometry blocks')
     

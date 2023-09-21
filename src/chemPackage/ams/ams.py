@@ -38,9 +38,9 @@ class AMS(ChemData):
         self.mixedkeys = ('ATOMS', 'EFIELD', 'FRAGMENTS', 'GEOMETRY',
                           'INTEGRATION')
         self.blockkeys = ('ANALYTICALFREQ', 'AORESPONSE', 'BASIS',
-                          'CONSTRAINTS', 'DIMQM', 'DIMPAR', 'EXCITATION',
+                          'CONSTRAINTS', 'DIMQM', 'DIMPAR', 'EXCITATIONS',
                           'EXCITEDGO', 'EXTERNALS', 'FDE', 'GEOVAR',
-                          'GUIBONDS', 'RESPONSE', 'REMOVEFRAGORBITALS', 'SCF',
+                          'GUIBONDS', 'MODIFYEXCITATION','RESPONSE', 'REMOVEFRAGORBITALS', 'SCF',
                           'SOLVATION', 'UNITS', 'VIBRON', 'XC', 'SUBEXCI', 'SUBRESPONSE')
         self.linekeys = ('A1FIT', 'BONDORDER', 'CHARGE', 'CREATE',
                          'NOPRINT', 'PRINT', 'RELATIVISTIC',
@@ -81,6 +81,9 @@ class AMS(ChemData):
             if 'INPUT START' in indices:
                 from .input_block import collect_input
                 collect_input(self, f, indices)
+
+            # Determine calculation type
+            self.__det_calc_type()
 
             if self.filetype != 'out': return
             
@@ -133,4 +136,104 @@ class AMS(ChemData):
                 from .polarizability import collect_linearresponse
                 collect_linearresponse(self, f, indices)
 
+            if "EXCITATIONS" in self.calctype:
+                if 'EXCITED STATE' in self.calctype:
+                    from .excitations import collect_excited_state
+                    collect_excited_state(self, f, indices)
+                else:
+                    from .excitations import collect_excitations
+                    collect_excitations(self, f, indices)
 
+
+            # Collect excitation and transtions
+
+    def __det_calc_type(self):
+        if not self.key:
+            from os.path import splitext
+            from chemPackage import collect, CollectionError
+            from textwrap import dedent
+            for ext in ('.run', '.inp'):
+                inp = splitext(self.filename)[0]+ext
+                try:
+                    inp = collect(inp)
+                except IOError:
+                    pass
+                else:
+                    break
+            else:
+                from textwrap import dedent
+                raise CollectionError (dedent('''\
+                The chem package requires the output file to have a copy of
+                the input block or have the input file be in the same directory
+                as the output file. The input block is used to determine the
+                calculation type and check for errors.
+                '''))
+            # Copy the input file's input block into this one
+            self.key    = inp.key
+            self.subkey = inp.subkey
+
+        # Determine calculation type
+        if 'EXCITEDGO' in self.key:
+            self.calctype.add('EXCITED STATE')
+        if 'EXCITATIONS' in self.key:
+            # TODO: Since legacy ADF allows for both EXCITATION and EXCITATIONS
+            # chemPackge also uses both version. Nasty workaround,
+            # low-level code to be corrected.
+            self.calctype.add('EXCITATIONS')
+            self.calctype.add('EXCITATION')
+        if 'RAMAN' in self.subkey:
+            self.calctype.add('RAMAN')
+        if 'VROA' in self.subkey:
+            self.calctype.add('VROA')
+            self.calctype.add('OPTICAL ROTATION')
+            self.calctype.add('POLARIZABILITY')
+        if 'AORESPONSE' in self.key or 'RESPONSE' in self.key:
+            if 'OPTICAL ROTATION' in self.subkey:
+                self.calctype.add('OPTICAL ROTATION')
+            else:
+                self.calctype.add('POLARIZABILITY')
+            if 'HYPERPOL' in self.subkey or 'TWONPLUSONE' in self.subkey or 'BETA' in self.subkey:
+            #if 'HYPERPOL' in self.subkey or 'BETA' in self.subkey:
+                self.calctype.add('HYPERPOLARIZABILITY')
+            if 'GAMMA' in self.subkey:
+                self.calctype.add('SECOND HYPERPOLARIZABILITY')
+            if 'LIFETIME' in self.subkey or 'DYNAHYP' in self.subkey:
+                self.calctype.add('FD')
+            else:
+                self.calctype.add('STATIC')
+        if 'FREQUENCIES' in self.subkey:
+            self.calctype.add('FREQUENCIES')
+        if 'GEOMETRY' in self.key:
+            it = 'ITERATIONS'
+            x = [x for x in self.key['GEOMETRY'][1] if it in x.upper()]
+            if 'EXCITED STATE' in self.calctype:
+                try:
+                    i = int(x[0].split()[1])
+                except IndexError:
+                    self.calctype.add('GEOMETRY')
+                else:
+                    if i > 1: self.calctype.add('GEOMETRY')
+            elif 'FREQUENCIES' not in self.subkey:
+                self.calctype.add('GEOMETRY')
+            elif 'ANALYTICALFREQ' in self.key:
+                self.calctype.add('GEOMETRY')
+        if 'DIMQM' in self.key:
+            self.calctype.add('DIM')
+        if 'FRAGMENTS' in self.key:
+            if self.key['FRAGMENTS'][1][0].split()[1][0:3] != 't21':
+                self.calctype.add('FRAGMENT ANALYSIS')
+        if 'UNRESTRICTED' in self.key:
+            self.calctype.add('UNRESTRICTED')
+        if 'FDE' in self.key:
+            self.calctype.add('FDE')
+        if 'SUBEXCI' in self.key:
+            self.calctype.add('FDE')
+            self.calctype.add('SUBEXCI')
+        if 'SUBRESPONSE' in self.key:
+            self.calctype.add('FDE')
+            self.calctype.add('SUBRESPONSE')
+        if 'SOLVATION' in self.key:
+            self.calctype.add('COSMO')
+
+        # All ADF is DFT calculations
+        self.calctype.add('DFT')
