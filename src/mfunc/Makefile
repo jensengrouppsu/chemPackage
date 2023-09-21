@@ -24,7 +24,7 @@ F2PYFLAGS += --fcompiler=intelem --f90flags='${F90FLAGS}' --arch='${F90ARCH}' \
 #  f2py --fcompiler=intelem --f90flags=' -FR -fPIC'  --arch='-m64' --opt='-ipo -O3 -unroll -inline'
 # =============================================================================
 # Libraries
-MKLROOT = /usr/global/intel/Compiler/2011.11/339/mkl
+# MKLROOT = /usr/global/intel/Compiler/2011.11/339/mkl
 #MKL = -L$(MKLROOT)/lib/intel64/ -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthread -lm
 MKL = -L$(MKLROOT)/lib/intel64/ -lmkl_rt -lpthread -lm
 INC += -I$(CURDIR) -I$(MKLROOT)/include

@@ -68,7 +68,7 @@ class InputFiles(object):
             except StopIteration:
                 raise ChemDataError ('No end for geometry block in template file.')
 
-        print('s/e',s,e)
+        # print('s/e',s,e)
 
         # Make title format string here, in case it is needed later.
         if t.program == 'ADF':

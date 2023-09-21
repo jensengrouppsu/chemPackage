@@ -53,7 +53,6 @@ class Coordinates(object):
 
         '''
         import os, sys
-        print(mode, dim, qm, a1, a2, file, dalton, abasis, latex)
 
         if dim: assert 'DIM' in self.calctype, ('printCoords(): '
                                                     'Not a DIMQM calculation.')
