@@ -176,6 +176,8 @@ def read_file(self):
         # Use the broad search in a set for fastest searching.
         if ' SCF MODERATELY CONVERGED' == line:
             print(self.filename, 'WARNING: SCF MODERATELY CONVERGED')
+        if 'Geometry optimization did NOT converge' == line:
+            print(self.filename, 'WARNING: GEOMETRY NOT CONVERGED')
         if line in search_lines:
             # If the line is in the first dict, store then remove from search
             if line in first:
