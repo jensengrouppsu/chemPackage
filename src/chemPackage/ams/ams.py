@@ -78,12 +78,12 @@ class AMS(ChemData):
             f, indices = read_file(self)
     
             # Collect input block
-            if 'INPUT START' in indices:
-                from .input_block import collect_input
-                collect_input(self, f, indices)
+            # if 'INPUT START' in indices:
+            #     from .input_block import collect_input
+            #     collect_input(self, f, indices)
 
             # Determine calculation type
-            self.__det_calc_type()
+            # self.__det_calc_type()
 
             if self.filetype != 'out': return
             
