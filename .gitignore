@@ -14,9 +14,6 @@ build/
 *.so
 *.mod
 
-# f2py
-.f2py_f2cmap
-
 # Mercurial
 .hgignore
 

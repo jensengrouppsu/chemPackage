@@ -7,9 +7,9 @@
 F90  = ifort
 
 # Release 
-F2PY = f2py 
-F90FLAGS = -FR -fPIC -heap-arrays -openmp -threads -lifcore
-F90OPT   = -ipo -O2 -unroll -inline
+F2PY = f2py
+F90FLAGS = -FR -fPIC -heap-arrays -qopenmp -threads -lifcore -diag-disable=10448 -nofor-main
+F90OPT   = -ipo -O3 -unroll -inline
 F90ARCH  = -m64
 # -ipo      : Interprocedural optimization - for code with more than one file
 # -O3       : Optimize for maximum speed, may take longer to compile
@@ -24,8 +24,8 @@ F90ARCH  = -m64
 #F90ARCH  = -m64
 
 
-F2PYFLAGS += --fcompiler=intelem --f90flags='${F90FLAGS}' --arch='${F90ARCH}' \
-             --opt='${F90OPT}'  --link-blas 
+F2PYFLAGS = --fcompiler=intelem --f90flags='${F90FLAGS}' --f77flags='${F90FLAGS}' --arch='${F90ARCH}' \
+             --opt='${F90OPT}' 
 # --fcompiler=intelem : Use intel's compiler
 
 # =============================================================================
