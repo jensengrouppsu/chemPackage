@@ -1,16 +1,28 @@
-__pycache__/__init__.cpython-38.pyc
-*.pyc
-adf/*.pyc
-adf/__pycache__/*.pyc
-adf/__pycache__/vibrations.cpython-38.pyc
-__pycache__/__init__.cpython-38.pyc
-__pycache__/__init__.cpython-38.pyc
-__pycache__/chemdata.cpython-38.pyc
-.vscode/settings.json
-nwchem/__pycache__/nwchem.cpython-38.pyc
-dim/*.pyc
-dim/__pycache__/*
-dressedT/__pycache__/*
-dressedT/*.pyc
-nwchem/__pycache__/*
-nwchem/*.pyc
+__pycache__/
+*.py[cod]
+
+# Distribution and packaging
+*.egg-info/
+build/
+
+# IDEs
+.vscode/
+.idea/
+
+# Fortran extensions
+*.o
+*.so
+*.mod
+
+# Mercurial
+.hgignore
+
+# OS generated files
+.DS_Store*
+.VolumeIcon.icns
+.fseventsd
+Icon?
+.gdb_history
+ehthumbs.db
+Thumbs.db
+.directory
