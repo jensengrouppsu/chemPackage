@@ -138,6 +138,12 @@ def read_file(self):
                 # AORESPONSE Optical Rotation
                 ' OPTICAL ROTATION':
                                                            ['OPTICAL ROTATION', 0],
+                # Hyperpolarizability tensors
+                '     The STATIC hyperpolarizability tensor beta':
+                                                         ['HYPERPOLARIZABILITY',0],
+                # Hyperpolarizability aoresponse tensors
+                ' beta                    real         imaginary':
+                                                         ['HYPERPOLARIZABILITY',1],
                 # Dipole-Quadrupole Polarizabilities
                 ' DIPOLE-QUADRUPOLE POLARIZABILITY':
                                                                    ['A-TENSOR', 8],
