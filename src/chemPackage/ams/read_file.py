@@ -91,6 +91,19 @@ def read_file(self):
                 # Singlet-triplet excitations
                 ' All SINGLET-TRIPLET excitation energies': 
                                                             ['SINGLET-TRIPLET', 4],
+            # DIM
+                # DIM coordinates
+                ' DIM-SYSTEM':
+                                                            ['DIM COORDINATES', 5],
+                # DIM dipole moment
+                ' D I M / Q M   R E S U L T S':
+                                                          ['DIM DIPOLE MOMENT', 0],
+                # DIM/QM interaction energy
+                ' DIM/QM Interaction Energy :':
+                                                              ['DIM/QM ENERGY', 0],
+                # DIM energy
+                ' DIM System Energy :':
+                                                                 ['DIM ENERGY', 0],
 
                 }
         last =  {
@@ -156,6 +169,15 @@ def read_file(self):
                 # Linear response function (
                 ' CONDENSED LINEAR RESPONSE FUNCTION (MATRIX ELEMENTS)':
                                                              ['LINEAR RESPONSE',3],
+                # DIM FD polarizability, real
+                ' Polarizability tensor for DIM system: Frequency-Dependent Real':
+                                                 ['DIM FD REAL POLARIZABILITY', 0],
+                # DIM FD polarizability, imag
+                ' Polarizability tensor for DIM system: Frequency-Dependent Imag':
+                                                 ['DIM FD IMAG POLARIZABILITY', 0],
+                # DIM static polarizability
+                ' Polarizability tensor for DIM system: Static':
+                                                  ['DIM STATIC POLARIZABILITY', 0],
                 #############
                 # Excitations
                 #############

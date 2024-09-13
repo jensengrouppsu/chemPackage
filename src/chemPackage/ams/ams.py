@@ -88,6 +88,10 @@ class AMS(ChemData):
 
             if self.filetype != 'out': return
             
+            if 'DIM' in self.calctype:
+                from .dim import collect_dim
+                collect_dim(self, f, indices)
+
             if 'INITIAL GEOMETRY' in indices:
                 from .coordinates import collect_geometry
                 collect_geometry(self, f, indices)
