@@ -35,8 +35,9 @@ class AMS(ChemData):
 
         # These keys may or may not be good
         # Create tuples of general keywords
-        self.mixedkeys = ('ATOMS', 'EFIELD', 'FRAGMENTS', 'GEOMETRY',
-                          'INTEGRATION')
+        # TODO: Enginekeys to be collected separately, to be implemented
+        # self.enginekeys = ('GEOMETRY')
+        self.mixedkeys = ('ATOMS', 'EFIELD', 'FRAGMENTS', 'INTEGRATION')
         self.blockkeys = ('ANALYTICALFREQ', 'AORESPONSE', 'BASIS',
                           'CONSTRAINTS', 'DIMQM', 'DIMPAR', 'EXCITATIONS',
                           'EXCITEDGO', 'EXTERNALS', 'FDE', 'GEOVAR',
@@ -78,15 +79,19 @@ class AMS(ChemData):
             f, indices = read_file(self)
     
             # Collect input block
-            # if 'INPUT START' in indices:
-            #     from .input_block import collect_input
-            #     collect_input(self, f, indices)
+            if 'INPUT START' in indices:
+                from .input_block import collect_input
+                collect_input(self, f, indices)
 
             # Determine calculation type
-            # self.__det_calc_type()
+            self.__det_calc_type()
 
             if self.filetype != 'out': return
             
+            if 'DIM' in self.calctype:
+                from .dim import collect_dim
+                collect_dim(self, f, indices)
+
             if 'INITIAL GEOMETRY' in indices:
                 from .coordinates import collect_geometry
                 collect_geometry(self, f, indices)
@@ -125,6 +130,19 @@ class AMS(ChemData):
             if 'C-TENSOR' in indices:
                 from .polarizability import collect_ctensor
                 collect_ctensor(self, f, indices)
+
+            # Collect hyperpolarizability
+            if 'HYPERPOLARIZABILITY' in indices:
+                if 'RESPONSE' in self.key:
+                    pass
+                    # from .polarizability import collect_hyperpolarizability
+                    # collect_hyperpolarizability(self, f, indices)
+                else:
+                    from .polarizability import collect_aoresponse_hyperpolarizability
+                    collect_aoresponse_hyperpolarizability(self, f, indices)
+
+                    # from .polarizability import collect_quadrupole_beta
+                    # collect_quadrupole_beta(self, f, indices)
 
             # Collecct magnetizability
             if 'MAGNETIZABILITY' in indices:
@@ -201,8 +219,8 @@ class AMS(ChemData):
                 self.calctype.add('FD')
             else:
                 self.calctype.add('STATIC')
-        if 'FREQUENCIES' in self.subkey:
-            self.calctype.add('FREQUENCIES')
+        # if 'FREQUENCIES' in self.subkey:
+        #     self.calctype.add('FREQUENCIES')
         if 'GEOMETRY' in self.key:
             it = 'ITERATIONS'
             x = [x for x in self.key['GEOMETRY'][1] if it in x.upper()]
