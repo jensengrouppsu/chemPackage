@@ -18,7 +18,6 @@ def collect_dim(self, f, indices):
     # them.
     if 'DIM COORDINATES' in indices:
         s = indices['DIM COORDINATES']
-        print(s)
         e = next(i for i, x in enumerate(f[s:], s) if not x.strip())
         # Elements 2, 3 and 4 are the X, Y, and Z coordinates
         self.dim_coordinates = np.array([x.split()[2:5] for x in f[s:e]],
