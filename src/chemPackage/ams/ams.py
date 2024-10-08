@@ -149,11 +149,13 @@ class AMS(ChemData):
                 from .polarizability import collect_magnetizability
                 collect_magnetizability(self, f, indices)
 
+            self.__collect_energy(f, indices)
             # collect linear response
             if "LINEAR RESPONSE" in indices:
                 from .polarizability import collect_linearresponse
                 collect_linearresponse(self, f, indices)
 
+            # Collect excitation and transtions
             if "EXCITATIONS" in self.calctype:
                 if 'EXCITED STATE' in self.calctype:
                     from .excitations import collect_excited_state
@@ -163,7 +165,40 @@ class AMS(ChemData):
                     collect_excitations(self, f, indices)
 
 
-            # Collect excitation and transtions
+    def __collect_energy(self, f, indices):
+        '''Collect energy analysis.'''
+        if 'ENERGY' in indices:
+            ix = indices['ENERGY']
+            # The energy decomposition is collected in Hartrees.  The orbial
+            # analysis can be broken into symmetry groups, so collect each of
+            # those.
+            self.energy = {}
+            fn = lambda x: float('nan') if '***' in x else float(x)
+            tl = next(x for x in f[ix:] if 'Total Pauli Repulsion:' in x)
+            self.energy['pauli'] = fn(tl.split()[3])
+            tl = next(x for x in f[ix:] if 'Total Steric Interaction:' in x)
+            self.energy['steric'] = fn(tl.split()[3])
+            tl = next(x for x in f[ix:] if 'Electrostatic Interaction:' in x)
+            self.energy['electrostatic'] = fn(tl.split()[2])
+            tl = next(x for x in f[ix:] if 'Total Orbital Interactions:' in x)
+            tp = fn(tl.split()[3])
+            tl = next(x for x in f[ix:] if 'Total Bonding Energy:' in x)
+            self.energy['total'] = fn(tl.split()[3])
+            s = next(i for i, x in enumerate(f[ix:], ix)
+                                            if x == 'Orbital Interactions') + 1
+            e = next(i for i, x in enumerate(f[s:], s) if '------------' in x)
+            # We will create a dict where the key is the sym group (no colon)
+            # Split on the colon
+            ar = [x.split(':') for x in f[s:e]]
+            # First part is key.  First number in second part is value
+            self.energy['orbital'] = dict(
+                                [(x.strip(), fn(y.split()[0])) for x, y in ar])
+            # Change HF component
+            if '(Hybrid part) HF exchange' in self.energy['orbital']:
+                self.energy['orbital']['HF exchange'] = (
+                           self.energy['orbital']['(Hybrid part) HF exchange'])
+                del self.energy['orbital']['(Hybrid part) HF exchange']
+            self.energy['orbital']['total'] = tp
 
     def __det_calc_type(self):
         if not self.key:
