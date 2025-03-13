@@ -164,6 +164,9 @@ class AMS(ChemData):
                     from .excitations import collect_excitations
                     collect_excitations(self, f, indices)
 
+            # Collect Hirshfeld polarizability
+            self.__collect_hirshfeld_polarizability(f, indices)
+
 
     def __collect_energy(self, f, indices):
         '''Collect energy analysis.'''
@@ -199,6 +202,7 @@ class AMS(ChemData):
                            self.energy['orbital']['(Hybrid part) HF exchange'])
                 del self.energy['orbital']['(Hybrid part) HF exchange']
             self.energy['orbital']['total'] = tp
+
 
     def __det_calc_type(self):
         if not self.key:
@@ -290,3 +294,78 @@ class AMS(ChemData):
 
         # All ADF is DFT calculations
         self.calctype.add('DFT')
+
+    def __collect_hirshfeld_polarizability(self, f, indices):
+        '''Collects the Hirshfeld local and non-local contribution to the polarizability'''
+        '''Collects the Hirshfeld charges'''
+        '''Array structured as [no.Atom][iDir][jDir]'''
+
+        # Get line numbers for Hirshfeld polarizability
+        ar = []
+        for i in range(len(f)):
+            if 'Hirshfeld fragment' in f[i]: ar.append(i+1)
+        ar = array(ar)
+        if len(ar) == 0: return
+
+        # Initialize
+        nfrag = int(len(ar)/3)
+        lcmplx = False
+        if f[ar[0]].split()[0].upper() == 'REAL':
+            lcmplx = True
+            ar = ar + 1
+        dtype = [complex if lcmplx else float][0]
+        dipoles_loc = zeros((3,nfrag,3), dtype=dtype)
+        dipoles_nonloc = zeros((3,nfrag,3), dtype=dtype)
+        dipoles_all = zeros((3,nfrag,3), dtype=dtype) #Xing add
+        dipoles_tot = zeros((3,3), dtype=dtype)
+        charges = zeros((3,nfrag), dtype=dtype)
+
+        # Collect values
+        iar = -1
+        for idir in range(3):
+            for ifrag in range(nfrag):
+                iar += 1
+                # Collect induced dipoles: local / intrinsic
+                for i in range(3):
+                    if lcmplx:
+                        dipoles_loc[idir][ifrag][i] = ( float(f[ar[iar]+i].split()[2])
+                                                + 1j*float(f[ar[iar]+i].split()[3]) )
+                    else:
+                        dipoles_loc[idir][ifrag][i] = float(f[ar[iar]+i].split()[2])
+                # Collect induced charges
+                if lcmplx:
+                    charges[idir][ifrag] = ( float(f[ar[iar]+3].split()[1])
+                                         + 1j*float(f[ar[iar]+3].split()[2]) )
+                else:
+                    charges[idir][ifrag] = float(f[ar[iar]+3].split()[1])
+                # Collect induced dipoles: non-local / charge transfer
+                for i in range(3): 
+                    if lcmplx:
+                        dipoles_nonloc[idir][ifrag][i] = ( float(f[ar[iar]+i+4].split()[2])
+                                                + 1j*float(f[ar[iar]+i+4].split()[3]) )
+                    else:
+                        dipoles_nonloc[idir][ifrag][i] = float(f[ar[iar]+i+4].split()[2])
+                #sum non-local and local up Xing
+                for i in range(3):
+                    if lcmplx:
+                        dipoles_all[idir][ifrag][i]=(float(f[ar[iar]+i].split()[2])+float(f[ar[iar]+i+4].split()[2])
+                                                    + 1j*float(f[ar[iar]+i].split()[3])+1j*float(f[ar[iar]+i+4].split()[3]) )
+                    else:
+                        dipoles_all[idir][ifrag][i]=float(f[ar[iar]+i].split()[2])+float(f[ar[iar]+i+4].split()[2])               
+
+            # Collect induced dipoles: total / identical to 'Polarizability tensor'
+            for i in range(3): 
+                if lcmplx:
+                    dipoles_tot[idir][i] = ( float(f[ar[iar]+i+8].split()[2])
+                                            + 1j*float(f[ar[iar]+i+8].split()[3]) )
+                else:
+                    dipoles_tot[idir][i] = float(f[ar[iar]+i+8].split()[2])
+
+
+        # Return induced charges and dipoles
+        # Each atomic dipole is dipole[index_atom][dir_dipole][dir_perturbation] -- Pengchong Liu, Oct. 2016
+        self.hirshfeld_induced_dipoles_loc = transpose(dipoles_loc,(1,2,0))
+        self.hirshfeld_induced_dipoles_nonloc = transpose(dipoles_nonloc,(1,2,0))
+        self.hirshfeld_induced_dipoles_tot = dipoles_tot
+        self.hirshfeld_induced_charges = transpose(charges)
+        self.hirsh_pol = transpose(dipoles_all,(1,2,0)) #Xing
