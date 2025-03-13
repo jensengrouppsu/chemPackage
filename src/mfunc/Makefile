@@ -4,17 +4,18 @@ ifeq ($(LIFX), )
 	F90 = gfortran
 else
 	F90 = ifx
+	F90FLAGS += -heap-arrays
 endif
 
 # F90  = gfortran
 
 # Release 
 F2PY = FC="${F90}"  python -m numpy.f2py
-F90FLAGS =  -heap-arrays -lpthread 
+F90FLAGS += -lpthread 
 
 ifeq ($(MKLROOT), )
 	# No MKL
-	F90FLAGS += -lopenblas -lblas -llapack
+	F90FLAGS += -lblas
 else
 	F90FLAGS += -lirc -limf -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lmkl_rt -lm -ldl
 	INC += -I$(MKLROOT)/include
@@ -31,7 +32,7 @@ INC += -I$(CURDIR)
 # =============================================================================
 
 # "make" builds all
-all: erf mvmult
+all: cleanall erf mvmult
 
 # General rule for building executable from objects. 
 # $@ is the name of the target (in this case the executable)

@@ -9,13 +9,14 @@ ifeq ($(LIFX), )
 	F90 = gfortran
 else
 	F90 = ifx
+	F90FLAGS += -heap-arrays
 endif
 
 # F90  = gfortran
 
 # Release 
 F2PY = FC="${F90}"  python -m numpy.f2py
-F90FLAGS =  -heap-arrays -lpthread 
+F90FLAGS += -lpthread 
 # F90OPT   = -ipo -O3 -unroll -inline
 # F90ARCH  = -m64
 # -ipo      : Interprocedural optimization - for code with more than one file
@@ -32,7 +33,7 @@ F90FLAGS =  -heap-arrays -lpthread
 
 ifeq ($(MKLROOT), )
 	# No MKL
-	F90FLAGS += -lopenblas -lblas -llapack
+	F90FLAGS += -lblas
 else
 	F90FLAGS += -lirc -limf -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lmkl_rt -lm -ldl
 	INC += -I$(MKLROOT)/include
@@ -50,7 +51,7 @@ INC += -I$(CURDIR)
 # =============================================================================
 
 # "make" builds all
-all: coordinate_functions tests drawingMath tensors
+all: cleanall coordinate_functions tests drawingMath tensors
 
 coordinate_functions: coordinate_functions.so
 
