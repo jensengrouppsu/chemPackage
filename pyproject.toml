@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools", "wheel", "numpy", "meson", "meson-python", "ninja"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chemPackage"
+version = "1.1.0"
+description = "Python package for interacting with data from quantum chemistry programs"
+readme = "README.md"
+authors = [
+    { name = "Jensen Research Group", email = "jensen@chem.psu.edu" }
+]
+maintainers = [
+    {name = "Gaohe Hu", email = "gaohehu@gmail.com"}
+]
+license = { file = "LICENSE" }
+requires-python = ">=3.7"
+dependencies = [
+    "numpy",
+    "natsort",
+    "setuptools",
+    "meson",
+    "meson-python",
+    "ninja"
+]
+
+[project.urls]
+Homepage = "https://github.com/jensengrouppsu/chemPackage"
+
+[tool.setuptools]
+packages = { find = { where = ["src"] } }
+include-package-data = true
+
+[tool.setuptools.package-dir]
+"" = "src"
