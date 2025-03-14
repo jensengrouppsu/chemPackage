@@ -418,7 +418,7 @@ def drawField(chemObj, xpara, ypara, zpara, scale=1, calctype='static scattered'
     # -- Pengchong Oct. 2016
         coords = transpose(chemObj.coordinates*ANGSTROM2BOHR)
         atom_radii=chemObj.radii()
-        dip_tot=(chemObj.hirshfeld_induced_dipoles_loc+chemObj.hirshfeld_induced_dipoles_loc)
+        dip_tot=(chemObj.hirshfeld_induced_dipoles_loc+chemObj.hirshfeld_induced_dipoles_nonloc)
         dipole=transpose(dip_tot[:,dir,:])    
         charges = zeros(len(dipole[0,:]))
 
@@ -456,8 +456,8 @@ def drawField(chemObj, xpara, ypara, zpara, scale=1, calctype='static scattered'
     else:
         efield = zeros_like(x)
         efield = array(efield, dtype='complex', order='f')
-    nsolv = chemObj.key["NSOLV"]
-    print('nsolv: ', nsolv)
+    # nsolv = chemObj.key["NSOLV"]
+    # print('nsolv: ', nsolv)
     if vec:
         from .f2py import drawing_math_vectors as dmv
         from .f2py import drawing_math_vectors_ret as dmv_ret
