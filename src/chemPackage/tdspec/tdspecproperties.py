@@ -106,7 +106,7 @@ def collect_e_frequency(self, f, indices):
 #        ix = indices['TIMING']
 #        try:
 #            # Look up to 50 lines before the timing for an error
-#            ix = next(i for i in xrange(ix, ix-50, -1) if 'ERROR' in f[i])
+#            ix = next(i for i in range(ix, ix-50, -1) if 'ERROR' in f[i])
 #        except StopIteration:
 #            # If no error was found then we terminated correctly
 #            self.termination = 'NORMAL TERMINATION'

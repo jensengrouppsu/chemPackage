@@ -13,7 +13,7 @@ def drawAtoms(chemObj):
     from .constants import atomic_color
     # Loop over all the atoms in the system, plotting a sphere for each one
     # Radius and color are determined by dictionary lookups
-    for i in xrange(chemObj.nallatoms):
+    for i in range(chemObj.nallatoms):
         ele = chemObj.allatoms[i]
         rad = chemObj.allradii('vis')[i]
         vi.sphere(pos=chemObj.allcoords[i], radius=rad,
@@ -214,12 +214,12 @@ def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
         from f2py import drawing_math_vectors as dmv
         from numpy import array,append
         efx,efy,efz=array([]),array([]),array([])
-        for ix in xrange(numX):   
+        for ix in range(numX):   
             x[:] = linex[ix]
-            for iy in xrange(numY):
+            for iy in range(numY):
                 y[:] = liney[iy]
                 dmv(x, y, linez, coords, dipole, atom_radii, efieldx, efieldy, efieldz, charges, False, dir, scrn, smear)
-                for iz in xrange(numZ):
+                for iz in range(numZ):
                     efx=append(efx,efieldx[iz])
                     efy=append(efy,efieldy[iz])
                     efz=append(efz,efieldz[iz])
@@ -238,15 +238,15 @@ def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
         print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(numY, 0.0, ypara[2], 0.0), file=f)
         print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(numZ, 0.0, 0.0, zpara[2]), file=f)
     #    atmNum = chemObj.dim_atomic_numbers
-        for i in xrange(natoms):
+        for i in range(natoms):
             print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}{4:12.6f}'.format(atmNum[i], 0.0, coords[0][i], coords[1][i], coords[2][i]), file=f)
         #
         # Generate voxel information
         t = 0
         ef=[]
-        for ix in xrange(numX):
+        for ix in range(numX):
             x[:] = linex[ix]
-            for iy in xrange(numY):
+            for iy in range(numY):
                 y[:] = liney[iy]
                 dm(x, y, linez, coords, dipole, atom_radii, efield, charges, False, dir, scrn, smear)
                 if mag:
@@ -254,7 +254,7 @@ def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
                 elif not sq:
                     efield = efield*efield
                 if (logscale): efield = log10(efield)
-                for iz in xrange(numZ):
+                for iz in range(numZ):
                     print('{0:< 13.5E}'.format(efield[iz].real), end='', file=f)
                     ef.append(efield[iz])
                     if (t % 6 == 5):
@@ -850,7 +850,7 @@ def raman_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
     sum = 0
     if sticks:
         print('Frequency     Cross Section')
-        for i in xrange(len(cross)):
+        for i in range(len(cross)):
             print(freq[i], '      ', cross[i]*scale)
             ax.plot((freq[i], freq[i]), (0, cross[i]*scale), 'r')
             sum += cross[i]*scale
@@ -916,7 +916,7 @@ def vroa_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
     sum = 0
     if sticks:
         print('Frequency     Cross Section')
-        for i in xrange(len(intensity)):
+        for i in range(len(intensity)):
             print(freq[i], '      ', intensity[i]*scale)
             ax.plot((freq[i], freq[i]), (0, intensity[i]*scale), 'r')
             sum += abs(intensity[i])*scale
@@ -975,7 +975,7 @@ def write_cube(xyz,xpara,ypara,zpara,density,name):
     print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(xpara[2], xstep, 0.0, 0.0), file=f)
     print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(ypara[2], 0.0, ystep, 0.0), file=f)
     print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(zpara[2], 0.0, 0.0, zstep), file=f)
-    for i in xrange(xyz.natoms):
+    for i in range(xyz.natoms):
         print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}{4:12.6f}'.format(int(atmNum[i]), 0.0, coords[i,0], coords[i,1], coords[i,2]), file=f)
 
     t = 0

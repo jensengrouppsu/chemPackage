@@ -14,17 +14,17 @@ def collect_basis(self, f, indices):
         # Find the start and end of the SFO basis block
         s = indices['SFO BASIS']
         try:
-            e = [i for i in xrange(s,min(s+5000,len(f)-1)) if f[i]==''][0]
+            e = [i for i in range(s,min(s+5000,len(f)-1)) if f[i]==''][0]
         except IndexError:
             return
         # Get SFO basis
         try:
-            aoid = [f[i].split()[9]+' '+f[i].split()[5] for i in xrange(s,e,2)]
-            orbital = [f[i].split()[7]+' '+f[i].split()[8] for i in xrange(s,e,2)]
+            aoid = [f[i].split()[9]+' '+f[i].split()[5] for i in range(s,e,2)]
+            orbital = [f[i].split()[7]+' '+f[i].split()[8] for i in range(s,e,2)]
         except IndexError:
             return
         # Add values to key
-        [self.basis['SFO'].append(tuple((aoid[i], orbital[i]))) for i in xrange(len(aoid))]
+        [self.basis['SFO'].append(tuple((aoid[i], orbital[i]))) for i in range(len(aoid))]
 
     if 'STO BASIS' in indices:
         # Initialize
@@ -35,8 +35,8 @@ def collect_basis(self, f, indices):
         
         try:
             #Xing modify
-            #e = [i-6 for i in xrange(s,min(s+5000,len(f)-1)) if '****' in f[i]][0] 
-            e = [i for i in xrange(s,min(s+5000,len(f)-1)) if 'Total number of charge' in f[i]][0]
+            #e = [i-6 for i in range(s,min(s+5000,len(f)-1)) if '****' in f[i]][0] 
+            e = [i for i in range(s,min(s+5000,len(f)-1)) if 'Total number of charge' in f[i]][0]
         except IndexError:
             return
         
@@ -63,15 +63,15 @@ def collect_basis(self, f, indices):
         atindxe = atindx
         atindxe.append(e)
         # Add a key for each atom
-        [[self.basis['STO'].update({atnumb[i][j]+' '+attype[i]: {}}) for j in xrange(len(atnumb[i]))] for i in xrange(len(attype))]
+        [[self.basis['STO'].update({atnumb[i][j]+' '+attype[i]: {}}) for j in range(len(atnumb[i]))] for i in range(len(attype))]
 
         # Collect X, Y, Z, and alpha for each type
         try:
-            X = [[int(f[i][10:33].split()[0]) for i in xrange(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
-            Y = [[int(f[i][10:33].split()[1]) for i in xrange(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
-            Z = [[int(f[i][10:33].split()[2]) for i in xrange(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
-            R = [[int(f[i][10:33].split()[3]) for i in xrange(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
-            alf = [[float(f[i][10:33].split()[4]) for i in xrange(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
+            X = [[int(f[i][10:33].split()[0]) for i in range(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
+            Y = [[int(f[i][10:33].split()[1]) for i in range(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
+            Z = [[int(f[i][10:33].split()[2]) for i in range(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
+            R = [[int(f[i][10:33].split()[3]) for i in range(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
+            alf = [[float(f[i][10:33].split()[4]) for i in range(atindxs[a]+2,atindxe[a+1]) if len(f[i][10:33].split())>4] for a in range(len(attype))]
         except ValueError or IndexError:
             return
         # Figure out the orbital type from the X, Y, Z, and R values
@@ -80,9 +80,9 @@ def collect_basis(self, f, indices):
         sY = ['', 'y', 'y2', 'y3', 'y4', 'y5']
         sZ = ['', 'z', 'z2', 'z3', 'z4', 'z5']
         obtyp = [['S' if X[i][j]+Y[i][j]+Z[i][j]==0 else sL[X[i][j]+Y[i][j]+Z[i][j]]+':'+sX[X[i][j]]+sY[Y[i][j]]+sZ[Z[i][j]]
-                  for j in xrange(len(X[i]))] for i in xrange(len(X))]
-        val = [[obtyp[i][:j].count(obtyp[i][j])+1 for j in xrange(len(obtyp[i]))] for i in xrange(len(obtyp))]
-        obtyp = [[str(val[i][j])+' '+obtyp[i][j] for j in xrange(len(obtyp[i]))] for i in xrange(len(obtyp))]
+                  for j in range(len(X[i]))] for i in range(len(X))]
+        val = [[obtyp[i][:j].count(obtyp[i][j])+1 for j in range(len(obtyp[i]))] for i in range(len(obtyp))]
+        obtyp = [[str(val[i][j])+' '+obtyp[i][j] for j in range(len(obtyp[i]))] for i in range(len(obtyp))]
         # Add information to each atom basis
         [[[self.basis['STO'][atnumb[i][j]+' '+attype[i]].update({obtyp[i][k]: tuple((X[i][k], Y[i][k], Z[i][k], R[i][k], alf[i][k]))})
-           for k in xrange(len(X[i]))] for j in xrange(len(atnumb[i]))] for i in xrange(len(attype))]
+           for k in range(len(X[i]))] for j in range(len(atnumb[i]))] for i in range(len(attype))]

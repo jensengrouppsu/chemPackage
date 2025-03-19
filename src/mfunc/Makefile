@@ -21,7 +21,7 @@ else
 	INC += -I$(MKLROOT)/include
 endif
 
-# NOTE: ifort somehow fails sanity chekc of f2py with meson backend 
+# NOTE: ifort somehow fails sanity check of f2py with meson backend 
 F2PYFLAGS =  --backend meson --f90flags=${F90FLAGS}
 
 INC += -I$(CURDIR)

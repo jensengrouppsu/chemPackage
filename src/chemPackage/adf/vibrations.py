@@ -75,7 +75,7 @@ def collect_frequencies(self, f, indices):
             pass
     self.nmodes = len(self.v_frequencies)
     # Simultaneously normalize in Bohr then convert to Angstroms
-    #for i in xrange(self.nmodes):
+    #for i in range(self.nmodes):
     for i in range(self.nmodes):
         self.normal_modes[i] *= B2A / norm(self.normal_modes[i].flatten())
 
