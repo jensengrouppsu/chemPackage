@@ -1,33 +1,34 @@
 from __future__ import print_function
 #from drawinginfo import __doc__
 
-def drawAtoms(chemObj):
-    ''' Draw all the atoms in 3D using VPython
-
-    .. note::
-        Requires that VPython and the Microsoft Default Font Package
-        is also installed.
-
-        '''
-    import vis as vi
-    from .constants import atomic_color
-    # Loop over all the atoms in the system, plotting a sphere for each one
-    # Radius and color are determined by dictionary lookups
-    for i in range(chemObj.nallatoms):
-        ele = chemObj.allatoms[i]
-        rad = chemObj.allradii('vis')[i]
-        vi.sphere(pos=chemObj.allcoords[i], radius=rad,
-                    color=atomic_color(ele))
-    # Draw axes to give the user a frame of reference
-    vi.curve(pos=[(0,0,-15),(0,0,15)], radius=.2, color=vi.color.white)
-    vi.text(pos=(0,0,-15), text='-Z', height=2, color=vi.color.white)
-    vi.text(pos=(0,0,15), text='+Z', height=2, color=vi.color.white)
-    vi.curve(pos=[(-15,0,0),(15,0,0)], radius=.1, color=vi.color.blue)
-    vi.text(pos=(-15,0,0), text='-X', height=2, color=vi.color.blue)
-    vi.text(pos=(15,0,0), text='+X', height=2, color=vi.color.blue)
-    vi.curve(pos=[(0,-15,0),(0,15,0)], radius=.1, color=vi.color.green)
-    vi.text(pos=(0,-15,0), text='-Y', height=2, color=vi.color.green)
-    vi.text(pos=(0,15,0), text='+Y', height=2, color=vi.color.green)
+# NOTE: This function seems deprecated
+# def drawAtoms(chemObj):
+#     ''' Draw all the atoms in 3D using VPython
+#
+#     .. note::
+#         Requires that VPython and the Microsoft Default Font Package
+#         is also installed.
+#
+#         '''
+#     import vis as vi
+#     from .constants import atomic_color
+#     # Loop over all the atoms in the system, plotting a sphere for each one
+#     # Radius and color are determined by dictionary lookups
+#     for i in range(chemObj.nallatoms):
+#         ele = chemObj.allatoms[i]
+#         rad = chemObj.allradii('vis')[i]
+#         vi.sphere(pos=chemObj.allcoords[i], radius=rad,
+#                     color=atomic_color(ele))
+#     # Draw axes to give the user a frame of reference
+#     vi.curve(pos=[(0,0,-15),(0,0,15)], radius=.2, color=vi.color.white)
+#     vi.text(pos=(0,0,-15), text='-Z', height=2, color=vi.color.white)
+#     vi.text(pos=(0,0,15), text='+Z', height=2, color=vi.color.white)
+#     vi.curve(pos=[(-15,0,0),(15,0,0)], radius=.1, color=vi.color.blue)
+#     vi.text(pos=(-15,0,0), text='-X', height=2, color=vi.color.blue)
+#     vi.text(pos=(15,0,0), text='+X', height=2, color=vi.color.blue)
+#     vi.curve(pos=[(0,-15,0),(0,15,0)], radius=.1, color=vi.color.green)
+#     vi.text(pos=(0,-15,0), text='-Y', height=2, color=vi.color.green)
+#     vi.text(pos=(0,15,0), text='+Y', height=2, color=vi.color.green)
 
 def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
               screen=False, smear=1.0, dir=4, sq=False, mag=False,
@@ -381,7 +382,7 @@ def drawField(chemObj, xpara, ypara, zpara, scale=1, calctype='static scattered'
                 exit("Must give valid direction index (0, 1, or 2)")
 
         # for retardation dir should match pol_vec of output file, if not, exit.
-        print( chemObj.key['A_VEC'])
+        # print( chemObj.key['A_VEC'])
         if "RETARDATION" in chemObj.key:
             if dir != chemObj.key["POL_VEC"]:
                 exit("Direction supplied must match polarizaton direction specified in calculation, the default pol_vec direction is y")
@@ -821,7 +822,7 @@ def __build2DGrid(aPara, bPara, cPara):
 def raman_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
                dim=(8,6), dpi=300, lw=2.0, fs=20, invert=False, **kwargs):
     from mfunc import sum_lorentzian
-    from constants import PI
+    from .constants import PI
     import matplotlib.pyplot as plt
     from numpy import linspace
     if 'dir' in kwargs:
@@ -880,7 +881,7 @@ def raman_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
 def vroa_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
                direction='180deg', dim=(4,3), dpi=300, lw=2.0, fs=8, **kwargs):
     from mfunc import sum_lorentzian
-    from constants import PI
+    from .constants import PI
     import matplotlib.pyplot as plt
     from numpy import linspace
     import numpy
