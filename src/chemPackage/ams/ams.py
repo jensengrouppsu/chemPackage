@@ -79,7 +79,7 @@ class AMS(ChemData):
             f, indices = read_file(self)
     
             # Collect input block
-            if 'INPUT START' in indices:
+            if 'ADF START' in indices:
                 from .input_block import collect_input
                 collect_input(self, f, indices)
 
