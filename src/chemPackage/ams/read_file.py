@@ -33,7 +33,9 @@ def read_file(self):
 
                 # End of the input block
                 ' *** adf ***':
-                                                                  ['INPUT END', 0],
+                                                                  ['ADF END', 0],
+                ' Evaluation was successful':
+                                                                  ['DFTB END',0],
                 #############################
                 # General / Common properties
                 #############################
@@ -113,7 +115,9 @@ def read_file(self):
 
                 # Start of input file
                 'ADF Engine Input':
-                                                                ['INPUT START', 0],
+                                                                ['ADF START', 0],
+                'DFTB Engine configuration':
+                                                                ['DFTB START',0],
                 ###########
                 # Technical
                 ###########
