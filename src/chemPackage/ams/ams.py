@@ -35,8 +35,9 @@ class AMS(ChemData):
 
         # These keys may or may not be good
         # Create tuples of general keywords
-        self.mixedkeys = ('ATOMS', 'EFIELD', 'FRAGMENTS', 'GEOMETRY',
-                          'INTEGRATION')
+        # TODO: Enginekeys to be collected separately, to be implemented
+        # self.enginekeys = ('GEOMETRY')
+        self.mixedkeys = ('ATOMS', 'EFIELD', 'FRAGMENTS', 'INTEGRATION')
         self.blockkeys = ('ANALYTICALFREQ', 'AORESPONSE', 'BASIS',
                           'CONSTRAINTS', 'DIMQM', 'DIMPAR', 'EXCITATIONS',
                           'EXCITEDGO', 'EXTERNALS', 'FDE', 'GEOVAR',
@@ -78,15 +79,19 @@ class AMS(ChemData):
             f, indices = read_file(self)
     
             # Collect input block
-            # if 'INPUT START' in indices:
-            #     from .input_block import collect_input
-            #     collect_input(self, f, indices)
+            if 'INPUT START' in indices:
+                from .input_block import collect_input
+                collect_input(self, f, indices)
 
             # Determine calculation type
-            # self.__det_calc_type()
+            self.__det_calc_type()
 
             if self.filetype != 'out': return
             
+            if 'DIM' in self.calctype:
+                from .dim import collect_dim
+                collect_dim(self, f, indices)
+
             if 'INITIAL GEOMETRY' in indices:
                 from .coordinates import collect_geometry
                 collect_geometry(self, f, indices)
@@ -126,16 +131,31 @@ class AMS(ChemData):
                 from .polarizability import collect_ctensor
                 collect_ctensor(self, f, indices)
 
+            # Collect hyperpolarizability
+            if 'HYPERPOLARIZABILITY' in indices:
+                if 'RESPONSE' in self.key:
+                    pass
+                    # from .polarizability import collect_hyperpolarizability
+                    # collect_hyperpolarizability(self, f, indices)
+                else:
+                    from .polarizability import collect_aoresponse_hyperpolarizability
+                    collect_aoresponse_hyperpolarizability(self, f, indices)
+
+                    # from .polarizability import collect_quadrupole_beta
+                    # collect_quadrupole_beta(self, f, indices)
+
             # Collecct magnetizability
             if 'MAGNETIZABILITY' in indices:
                 from .polarizability import collect_magnetizability
                 collect_magnetizability(self, f, indices)
 
+            self.__collect_energy(f, indices)
             # collect linear response
             if "LINEAR RESPONSE" in indices:
                 from .polarizability import collect_linearresponse
                 collect_linearresponse(self, f, indices)
 
+            # Collect excitation and transtions
             if "EXCITATIONS" in self.calctype:
                 if 'EXCITED STATE' in self.calctype:
                     from .excitations import collect_excited_state
@@ -145,7 +165,40 @@ class AMS(ChemData):
                     collect_excitations(self, f, indices)
 
 
-            # Collect excitation and transtions
+    def __collect_energy(self, f, indices):
+        '''Collect energy analysis.'''
+        if 'ENERGY' in indices:
+            ix = indices['ENERGY']
+            # The energy decomposition is collected in Hartrees.  The orbial
+            # analysis can be broken into symmetry groups, so collect each of
+            # those.
+            self.energy = {}
+            fn = lambda x: float('nan') if '***' in x else float(x)
+            tl = next(x for x in f[ix:] if 'Total Pauli Repulsion:' in x)
+            self.energy['pauli'] = fn(tl.split()[3])
+            tl = next(x for x in f[ix:] if 'Total Steric Interaction:' in x)
+            self.energy['steric'] = fn(tl.split()[3])
+            tl = next(x for x in f[ix:] if 'Electrostatic Interaction:' in x)
+            self.energy['electrostatic'] = fn(tl.split()[2])
+            tl = next(x for x in f[ix:] if 'Total Orbital Interactions:' in x)
+            tp = fn(tl.split()[3])
+            tl = next(x for x in f[ix:] if 'Total Bonding Energy:' in x)
+            self.energy['total'] = fn(tl.split()[3])
+            s = next(i for i, x in enumerate(f[ix:], ix)
+                                            if x == 'Orbital Interactions') + 1
+            e = next(i for i, x in enumerate(f[s:], s) if '------------' in x)
+            # We will create a dict where the key is the sym group (no colon)
+            # Split on the colon
+            ar = [x.split(':') for x in f[s:e]]
+            # First part is key.  First number in second part is value
+            self.energy['orbital'] = dict(
+                                [(x.strip(), fn(y.split()[0])) for x, y in ar])
+            # Change HF component
+            if '(Hybrid part) HF exchange' in self.energy['orbital']:
+                self.energy['orbital']['HF exchange'] = (
+                           self.energy['orbital']['(Hybrid part) HF exchange'])
+                del self.energy['orbital']['(Hybrid part) HF exchange']
+            self.energy['orbital']['total'] = tp
 
     def __det_calc_type(self):
         if not self.key:
@@ -201,8 +254,8 @@ class AMS(ChemData):
                 self.calctype.add('FD')
             else:
                 self.calctype.add('STATIC')
-        if 'FREQUENCIES' in self.subkey:
-            self.calctype.add('FREQUENCIES')
+        # if 'FREQUENCIES' in self.subkey:
+        #     self.calctype.add('FREQUENCIES')
         if 'GEOMETRY' in self.key:
             it = 'ITERATIONS'
             x = [x for x in self.key['GEOMETRY'][1] if it in x.upper()]

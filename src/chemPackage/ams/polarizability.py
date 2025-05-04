@@ -214,6 +214,79 @@ def collect_ctensor(self, f, indices):
     else:
         self._raise_or_pass('Error locating AORESPONSE QUADRUPOLE-QUADRUPOLE tensor')
 
+def collect_aoresponse_hyperpolarizability(self, f, indices):
+    '''Collect aoresponse hyperpolarizability.'''
+
+    # See read_file.py, set up a new term in dictionary
+    if 'HYPERPOLARIZABILITY' in indices:
+        # Set up the range for scanning, s: start; e: end.
+        # Start right at the first line,use [0] due to numerical calculation(e = s + 27)
+        s = indices['HYPERPOLARIZABILITY'][0]
+        e = s + 27
+        self.hyperpolarizability = {}
+
+        # Make an empty list for the real part of beta
+        r = []
+        # Make an empty list for the imaginary part of beta 
+        if 'LIFETIME' in self.subkey:
+            i = []
+        # Scan the lines from s(tart) to e(nd) by using a loop  
+        for j in range(s, e):
+            # Return a list of the words in the string, name it as 'o'
+            o = f[j].split()
+            # Add the fourth element of 'o' to 'r'(***Python starts at 0)
+            # Zhongwei: in case there are too many digits in a number
+            if '-' in o[3][1:-1]:
+               imag = o[3][15:-1]
+               o[3] = o[3][0:15]
+            r.append(o[3])
+            # Add the fifth element of 'o' to 'i'
+            if 'LIFETIME' in self.subkey:
+               try:
+                  i.append(o[4])
+               except IndexError:
+                  i.append(imag)
+
+        if 'LIFETIME' in self.subkey:
+            # Split the line that starts with omega1,omega2 in the output
+            p = f[s-4].split()
+            # Make an array for the two frequencies
+            self.b_e_frequencies = array([], dtype=float)
+            self.c_e_frequencies = array([], dtype=float)
+            # Fill the list/array with the cooresponding frequency
+            self.b_e_frequencies = append(self.b_e_frequencies, float(p[1]))
+            self.c_e_frequencies = append(self.c_e_frequencies, float(p[2]))
+
+            # Make an array for 'r', 'i' and reshape each of them
+            rhpoltmp = array(r, dtype=float)
+            rhpoltmp = rhpoltmp.reshape(3,3,3)
+            ihpoltmp = array(i, dtype=float)
+            ihpoltmp = ihpoltmp.reshape(3,3,3)
+            # Combine real and imaginary part together
+            hpoltmp = rhpoltmp + ihpoltmp*1j
+            self.hyperpolarizability['FD'] = hpoltmp
+        else:
+                q = f[s-4].split()
+                # Convert string to number
+                freq1 = float(q[1])
+                freq2 = float(q[2])
+                if freq1 == 0 and freq2 == 0:
+                    hpoltmp = array(r, dtype=float)
+                    hpoltmp = hpoltmp.reshape(3,3,3)
+                    self.hyperpolarizability['STATIC'] = hpoltmp
+                elif freq1 == -freq2:
+                    hpoltmp = array(r, dtype=float)
+                    hpoltmp = hpoltmp.reshape(3,3,3)
+                    self.hyperpolarizability['OR'] = hpoltmp
+                elif freq1 == freq2:
+                    hpoltmp = array(r, dtype=float)
+                    hpoltmp = hpoltmp.reshape(3,3,3)
+                    self.hyperpolarizability['SHG'] = hpoltmp
+                else:
+                    hpoltmp = array(r, dtype=float)
+                    hpoltmp = hpoltmp.reshape(3,3,3)
+                    self.hyperpolarizability['EOPE'] = hpoltmp
+
 
 def collect_magnetizability(self, f, indices):
     '''Collects the magnetic dipole-magnetic dipole polarizability.'''

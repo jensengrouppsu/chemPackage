@@ -73,41 +73,42 @@ def collect_input(self, f, indices):
 
     # Next, collect the mixed types.  Can be line only or block.
     # Lines are kept in element one, block in element two.
-    for keyword in self.mixedkeys:
-        ix = next((i for i, x in enumerate(search[si:], si) if keyword in x), -1)
-        if ix == -1:
-            pass
-        else:
-            # Skip EFIELD if this word is in the DIMQM block
-            if keyword == 'EFIELD' and 'DIMQM' in self.key:
-                if index['DIMQM'][0] < ix < index['DIMQM'][1]: continue
-            # Make a two element list
-            self.key[keyword] = ['', tuple()]
-            # Add the line part, if any
-            self.key[keyword][0] = ' '.join(f[ix].lstrip().split()[1:])
-            # Now add the block part if it exists.  Not always true
-            # For EFIELD or GEOMETRY
-            bl = '&' in self.key[keyword][0] or not self.key[keyword][0]
-            if ((keyword in ('GEOMETRY', 'EFIELD') and bl) or
-                (keyword in ('FRAGMENTS', 'ATOMS'))):
-                s = ix + 1
-                # Locate END for this block
-                e = next(i for i, x in enumerate(search[s:], s) if x == 'END')
-                # Make the parameters a tuple in this key
-                self.key[keyword][1] = tuple(x for x in f[s:e])
-                # Locate possible subkeys
-                __determine_subkeys(self, keyword, s, e, search)
-                # ATOMS specific handling
-                if keyword == 'ATOMS':
-                    from .coordinates import atom_block
-                    atom_block(self, s, e, search, f, indices)
-                # Record where found
-                index[keyword] = (ix, e)
-            else:
-                # Record where found
-                index[keyword] = (ix, None)
-            # Make the entry a tuple
-            self.key[keyword] = tuple(self.key[keyword])
+    # FIXME: Some of these keys have been moved to engine settings, commented out for now.
+    # for keyword in self.mixedkeys:
+    #     ix = next((i for i, x in enumerate(search[si:], si) if keyword in x), -1)
+    #     if ix == -1:
+    #         pass
+    #     else:
+    #         # Skip EFIELD if this word is in the DIMQM block
+    #         if keyword == 'EFIELD' and 'DIMQM' in self.key:
+    #             if index['DIMQM'][0] < ix < index['DIMQM'][1]: continue
+    #         # Make a two element list
+    #         self.key[keyword] = ['', tuple()]
+    #         # Add the line part, if any
+    #         self.key[keyword][0] = ' '.join(f[ix].lstrip().split()[1:])
+    #         # Now add the block part if it exists.  Not always true
+    #         # For EFIELD or GEOMETRY
+    #         bl = '&' in self.key[keyword][0] or not self.key[keyword][0]
+    #         if ((keyword in ('GEOMETRY', 'EFIELD') and bl) or
+    #             (keyword in ('FRAGMENTS', 'ATOMS'))):
+    #             s = ix + 1
+    #             # Locate END for this block
+    #             e = next(i for i, x in enumerate(search[s:], s) if x == 'END')
+    #             # Make the parameters a tuple in this key
+    #             self.key[keyword][1] = tuple(x for x in f[s:e])
+    #             # Locate possible subkeys
+    #             __determine_subkeys(self, keyword, s, e, search)
+    #             # ATOMS specific handling
+    #             if keyword == 'ATOMS':
+    #                 from .coordinates import atom_block
+    #                 atom_block(self, s, e, search, f, indices)
+    #             # Record where found
+    #             index[keyword] = (ix, e)
+    #         else:
+    #             # Record where found
+    #             index[keyword] = (ix, None)
+    #         # Make the entry a tuple
+    #         self.key[keyword] = tuple(self.key[keyword])
 
     # Last, keep a record of the order of the inputs
     self._input_order = tuple(sorted(index, key=index.get))
@@ -166,7 +167,7 @@ def __determine_subkeys(self, k, s, e, search):
             self.subkey.add('FREQUENCIES')
         elif next((x for x in search[s:e] if 'FREQUENCIES' in x), False):
             self.subkey.add('FREQUENCIES')
-    elif k == 'ANALYTICALFREQ': self.subkey.add('FREQUENCIES')
+    # elif k == 'ANALYTICALFREQ': self.subkey.add('FREQUENCIES')
     elif k == 'AORESPONSE':
         if next((x for x in search[s:e] if 'LIFETIME' in x), False):
             self.subkey.add('LIFETIME')
@@ -184,8 +185,9 @@ def __determine_subkeys(self, k, s, e, search):
         #    self.subkey.add('BETA')
         if next((x for x in search[s:e] if 'GAMMA' in x), False):
             self.subkey.add('GAMMA')
-        if next((x for x in search[s:e] if 'FREQRANGE' in x), False):
-            self.subkey.add('FREQRANGE')
+        # TODO: I didn't find any places that use this subkey, and it looks wrong
+        # if next((x for x in search[s:e] if 'FREQRANGE' in x), False):
+        #     self.subkey.add('FREQRANGE')
     elif k == 'RESPONSE':
         if next((x for x in search[s:e] if 'RAMAN' in x), False):
             self.subkey.add('RAMAN')
