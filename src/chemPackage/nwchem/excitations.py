@@ -1,8 +1,7 @@
 from __future__ import print_function, division
 from ..constants import EV2HART
 from numpy import array, where, argsort, arange
-from numpy.core.records import fromarrays
-import numpy
+import numpy as np
 
 def collect_excitations(self, f, indices):
     '''Driver to collect excitations.'''
@@ -231,12 +230,11 @@ def __dft_excitations(self, f, ix):
         # Determine the percent contribution.
         pcent = array(ar[:,4], dtype=float)**2
         # Normalize to the sum of squares
-        pcent = (pcent/numpy.linalg.norm(pcent))**2
+        pcent = (pcent/np.linalg.norm(pcent))**2
         # Sort according to decreasing percent
         index = argsort(pcent)[::-1]
         # Add to the transitions list as a record array
-        trans.append(fromarrays([occ[index], unocc[index], pcent[index]],
-                                names='occ,unocc,pcent'))
+        trans.append([occ[index], unocc[index], pcent[index]])
     # Now that we've collected everything, sort the energies.
     # This is required in case we calculated both singlets and triplets
     self.nexcite = len(een)

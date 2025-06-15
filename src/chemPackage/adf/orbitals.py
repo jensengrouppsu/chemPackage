@@ -1,6 +1,6 @@
 from __future__ import print_function, division
 from numpy import array, where, vectorize, zeros, argsort, append
-from numpy.core.records import fromarrays
+import numpy as np
 import re
 
 def collect_orbitals(self, f, indices):
@@ -152,7 +152,12 @@ def __collect_aos(self, f, imo, e):
         try:
             pcent, ao_id, sym = aolines(lines)
             # Place into a record array
-            aos.append(fromarrays([pcent, ao_id, sym], names='pcent,ao_id,sym'))
+            arr = np.array(
+                list(zip(pcent, ao_id, sym)),
+                dtype=[('pcent', float), ('ao_id', 'U40'), ('sym', 'U40')]
+            )
+            aos.append(arr)
+            # aos.append(fromarrays([pcent, ao_id, sym], names='pcent,ao_id,sym'))
         except IndexError:
             pass
 

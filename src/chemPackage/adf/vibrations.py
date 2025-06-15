@@ -1,5 +1,6 @@
 from __future__ import print_function, division
-from numpy import array, append, argsort, row_stack, reshape, sqrt
+from numpy import array, append, argsort  
+import numpy as np
 
 def collect_frequencies(self, f, indices):
     '''Collect frequencies and IR intensities.'''
@@ -93,7 +94,6 @@ def collect_frequencies(self, f, indices):
 
 def collect_raman(self, f, indices):
     '''Collect Raman scattering factors.'''
-    from numpy import fastCopyAndTranspose as fcat
     
     # The Raman intensities are listed in symmetry order, so they may
     # not be in numerical order. To account for this, we record the
@@ -126,9 +126,9 @@ def collect_raman(self, f, indices):
         else:
             e = next(i for i,x in enumerate(f[s:], s) if not x.strip())
             tp = array([x.split() for x in f[s:e]], dtype=float)
-            tp = fcat(array([tp[:,0], tp[:,2]]))
+            tp = np.stack((tp[:, 0], tp[:, 2]), axis=1)
         try:
-            self._raman = row_stack((self._raman, tp))
+            self._raman = np.vstack((self._raman, tp))
         except ValueError:
             self._raman = tp
     index = argsort(self._raman[:,0])
