@@ -10,7 +10,8 @@ def read_file(self):
     if self.filetype != 'out':
         istrt = next(i for i, x in enumerate(f) if r'$AMSBIN/ams' in x)
         iend = next(i for i, x in enumerate(f[istrt:], istrt) if x == 'eor')
-        indices = { 'INPUT START' : istrt, 'INPUT END' : iend }
+        # Gaohe: We need to find an unified way of collecting input
+        indices = { 'ADF START' : istrt, 'ADF END' : iend }
         return f, indices
     # Otherwise, read the entire output file
     if self.project=='all':

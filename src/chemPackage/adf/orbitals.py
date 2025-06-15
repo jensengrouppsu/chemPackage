@@ -137,7 +137,7 @@ def __collect_aos(self, f, imo, e):
 
     # Loop over each MO index location, which is also the start of the AO list
     aos = []
-    #for i in xrange(len(imo)):
+    #for i in range(len(imo)):
     for i in range(len(imo)):
         # Find the index range for each set of AOs.
         # The try is if this is the last MO then imo[i+1] does not exist

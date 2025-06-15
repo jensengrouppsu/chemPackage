@@ -26,7 +26,8 @@ def __aoresponse(self, f, indices):
             ln = f[ix+1].split()
             self.e_frequencies = append(self.e_frequencies, float(ln[2]))
             # Collect tensor.  Different for real and complex.
-            if f[ix+14].strip() =="IMAGINARY POLARIZABILITY":
+            # Gaohe: Currently ptw
+            if (f[ix+14].strip() =="IMAGINARY POLARIZABILITY"): 
            #if 'LIFETIME' in self.subkey:
                 s = ix + 8
                 e = ix + 11
@@ -39,6 +40,14 @@ def __aoresponse(self, f, indices):
                     s = ix + 16
                     e = ix + 19
                     i = array([[x.split() for x in f[s:e]]], dtype=float)
+                pol = r + i*1j
+            elif (f[ix+14].strip() == "Imaginary Polarizability tensor:"): 
+                s = ix + 8
+                e = ix + 11
+                r = array([[x.split() for x in f[s:e]]], dtype=float)
+                s = ix + 16
+                e = ix + 19
+                i = array([[x.split() for x in f[s:e]]], dtype=float)
                 pol = r + i*1j
             else:
                 s = ix + 8

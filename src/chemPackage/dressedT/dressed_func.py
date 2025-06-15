@@ -166,7 +166,7 @@ def hpol_average(tn):
     bmean = zeros((len(tn),2),dtype=complex)
     hpol_avg = zeros(len(tn), dtype=complex)
     b_avg = zeros((len(tn),15), dtype=complex)
-    for n in xrange(len(tn)):
+    for n in range(len(tn)):
         b_avg[n][0] = sum([tn[n][i][i][i]*cj[n][i][i][i]
                                for i in first])
 
@@ -808,7 +808,7 @@ def expdie(name, freqs):
         with open(filename) as fl:
             f = [x.strip().split() for x in fl if x[0] != '#']
         # Now, reorganize from row x col ==> col x row
-        return [[float(nums[n]) for nums in f] for n in xrange(len(f[0]))]
+        return [[float(nums[n]) for nums in f] for n in range(len(f[0]))]
 
     die = []
     if name:
@@ -836,7 +836,7 @@ def expdie(name, freqs):
             imag = interpolate(expdata[0], expdata[2], imagknots, HART2NM(freqs))
             die = real + 1.j*imag
     else:
-        die = [complex(0.0) for i in xrange(len(freqs))]
+        die = [complex(0.0) for i in range(len(freqs))]
 
     return die
 
@@ -854,15 +854,15 @@ def spline(x, y):
     n = len(x) - 1
 
     # Set up the tridiagonal equations
-    c = [x[i] - x[i-1] for i in xrange(1,n)] + [0.0]
+    c = [x[i] - x[i-1] for i in range(1,n)] + [0.0]
     c[0] = 0.0
-    d = [1.0] + [2.0 * ( x[i+1] - x[i-1] ) for i in xrange(1,n)] + [1.0]
-    e = [0.0] + [x[i+1] - x[i] for i in xrange(1,n)]
+    d = [1.0] + [2.0 * ( x[i+1] - x[i-1] ) for i in range(1,n)] + [1.0]
+    e = [0.0] + [x[i+1] - x[i] for i in range(1,n)]
 
     # Set up the knots to solve for
     k = [0.0] + [6.0 * ( ( y[i+1] - y[i] ) / ( x[i+1] - x[i] ) 
                        - ( y[i] - y[i-1] ) / ( x[i] - x[i-1] ) )
-                                                 for i in xrange(1,n)] + [0.0]
+                                                 for i in range(1,n)] + [0.0]
 
     ##########################################################
     # Solve the tridiagonal system to return the knots
@@ -873,16 +873,16 @@ def spline(x, y):
     n += 1
 
     # Decompose the matrix
-    for i in xrange(1, n):
+    for i in range(1, n):
         lam    = c[i-1] / d[i-1]
         d[i]  -= lam * e[i-1]
         c[i-1] = lam
 
     # Use the decomposed matrix to solve for the knots
-    for i in xrange(1,n):
+    for i in range(1,n):
         k[i] = k[i] - c[i-1] * k[i-1]
     k[n-1] = k[n-1] / d[n-1]
-    for i in xrange(n-2, -1, -1):
+    for i in range(n-2, -1, -1):
         k[i] = ( k[i] - e[i] * k[i+1] ) / d[i]
 
     return k
