@@ -177,20 +177,20 @@ class fde_class():
         if 'FDEC ENERGIES' in indices:
             for s in indices['FDEC ENERGIES']:
                 e = s + self.fdec_nexci
-                self.fdec_energies = array([f[i].split()[1] for i in xrange(s,e)], dtype=float)
+                self.fdec_energies = array([f[i].split()[1] for i in range(s,e)], dtype=float)
                 self.fdec_energies *= 0.0367493088 # convert from eV to hartrees
-                self.fdec_oscillator_strength = array([f[i].split()[2] for i in xrange(s,e)], dtype=float)
+                self.fdec_oscillator_strength = array([f[i].split()[2] for i in range(s,e)], dtype=float)
 
         if 'FDEC DIPOLE MOMENTS' in indices:
             for s in indices['FDEC DIPOLE MOMENTS']:
                 e = s + self.fdec_nexci
-                self.fdec_transdip = array([f[i].split()[2:5] for i in xrange(s,e)], dtype=float)
+                self.fdec_transdip = array([f[i].split()[2:5] for i in range(s,e)], dtype=float)
 
         # FDEc polarizability
         if 'FDEC POLARIZABILITY' in indices:
             s = indices['FDEC POLARIZABILITY']
             try:
-                self.fdec_pol = array([f[i].split()[1:4] for i in xrange(s,s+3)], dtype=float)
+                self.fdec_pol = array([f[i].split()[1:4] for i in range(s,s+3)], dtype=float)
             except ValueError:
                 self.fdec_pol = zeros((3,3))
             except IndexError:

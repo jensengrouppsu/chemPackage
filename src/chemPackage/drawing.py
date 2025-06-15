@@ -1,33 +1,34 @@
 from __future__ import print_function
 #from drawinginfo import __doc__
 
-def drawAtoms(chemObj):
-    ''' Draw all the atoms in 3D using VPython
-
-    .. note::
-        Requires that VPython and the Microsoft Default Font Package
-        is also installed.
-
-        '''
-    import vis as vi
-    from .constants import atomic_color
-    # Loop over all the atoms in the system, plotting a sphere for each one
-    # Radius and color are determined by dictionary lookups
-    for i in xrange(chemObj.nallatoms):
-        ele = chemObj.allatoms[i]
-        rad = chemObj.allradii('vis')[i]
-        vi.sphere(pos=chemObj.allcoords[i], radius=rad,
-                    color=atomic_color(ele))
-    # Draw axes to give the user a frame of reference
-    vi.curve(pos=[(0,0,-15),(0,0,15)], radius=.2, color=vi.color.white)
-    vi.text(pos=(0,0,-15), text='-Z', height=2, color=vi.color.white)
-    vi.text(pos=(0,0,15), text='+Z', height=2, color=vi.color.white)
-    vi.curve(pos=[(-15,0,0),(15,0,0)], radius=.1, color=vi.color.blue)
-    vi.text(pos=(-15,0,0), text='-X', height=2, color=vi.color.blue)
-    vi.text(pos=(15,0,0), text='+X', height=2, color=vi.color.blue)
-    vi.curve(pos=[(0,-15,0),(0,15,0)], radius=.1, color=vi.color.green)
-    vi.text(pos=(0,-15,0), text='-Y', height=2, color=vi.color.green)
-    vi.text(pos=(0,15,0), text='+Y', height=2, color=vi.color.green)
+# NOTE: This function seems deprecated
+# def drawAtoms(chemObj):
+#     ''' Draw all the atoms in 3D using VPython
+#
+#     .. note::
+#         Requires that VPython and the Microsoft Default Font Package
+#         is also installed.
+#
+#         '''
+#     import vis as vi
+#     from .constants import atomic_color
+#     # Loop over all the atoms in the system, plotting a sphere for each one
+#     # Radius and color are determined by dictionary lookups
+#     for i in range(chemObj.nallatoms):
+#         ele = chemObj.allatoms[i]
+#         rad = chemObj.allradii('vis')[i]
+#         vi.sphere(pos=chemObj.allcoords[i], radius=rad,
+#                     color=atomic_color(ele))
+#     # Draw axes to give the user a frame of reference
+#     vi.curve(pos=[(0,0,-15),(0,0,15)], radius=.2, color=vi.color.white)
+#     vi.text(pos=(0,0,-15), text='-Z', height=2, color=vi.color.white)
+#     vi.text(pos=(0,0,15), text='+Z', height=2, color=vi.color.white)
+#     vi.curve(pos=[(-15,0,0),(15,0,0)], radius=.1, color=vi.color.blue)
+#     vi.text(pos=(-15,0,0), text='-X', height=2, color=vi.color.blue)
+#     vi.text(pos=(15,0,0), text='+X', height=2, color=vi.color.blue)
+#     vi.curve(pos=[(0,-15,0),(0,15,0)], radius=.1, color=vi.color.green)
+#     vi.text(pos=(0,-15,0), text='-Y', height=2, color=vi.color.green)
+#     vi.text(pos=(0,15,0), text='+Y', height=2, color=vi.color.green)
 
 def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
               screen=False, smear=1.0, dir=4, sq=False, mag=False,
@@ -214,12 +215,12 @@ def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
         from f2py import drawing_math_vectors as dmv
         from numpy import array,append
         efx,efy,efz=array([]),array([]),array([])
-        for ix in xrange(numX):   
+        for ix in range(numX):   
             x[:] = linex[ix]
-            for iy in xrange(numY):
+            for iy in range(numY):
                 y[:] = liney[iy]
                 dmv(x, y, linez, coords, dipole, atom_radii, efieldx, efieldy, efieldz, charges, False, dir, scrn, smear)
-                for iz in xrange(numZ):
+                for iz in range(numZ):
                     efx=append(efx,efieldx[iz])
                     efy=append(efy,efieldy[iz])
                     efz=append(efz,efieldz[iz])
@@ -238,15 +239,15 @@ def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
         print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(numY, 0.0, ypara[2], 0.0), file=f)
         print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(numZ, 0.0, 0.0, zpara[2]), file=f)
     #    atmNum = chemObj.dim_atomic_numbers
-        for i in xrange(natoms):
+        for i in range(natoms):
             print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}{4:12.6f}'.format(atmNum[i], 0.0, coords[0][i], coords[1][i], coords[2][i]), file=f)
         #
         # Generate voxel information
         t = 0
         ef=[]
-        for ix in xrange(numX):
+        for ix in range(numX):
             x[:] = linex[ix]
-            for iy in xrange(numY):
+            for iy in range(numY):
                 y[:] = liney[iy]
                 dm(x, y, linez, coords, dipole, atom_radii, efield, charges, False, dir, scrn, smear)
                 if mag:
@@ -254,7 +255,7 @@ def cubeFile (chemObj, xpara, ypara, zpara, file, angstrom=True,
                 elif not sq:
                     efield = efield*efield
                 if (logscale): efield = log10(efield)
-                for iz in xrange(numZ):
+                for iz in range(numZ):
                     print('{0:< 13.5E}'.format(efield[iz].real), end='', file=f)
                     ef.append(efield[iz])
                     if (t % 6 == 5):
@@ -381,7 +382,7 @@ def drawField(chemObj, xpara, ypara, zpara, scale=1, calctype='static scattered'
                 exit("Must give valid direction index (0, 1, or 2)")
 
         # for retardation dir should match pol_vec of output file, if not, exit.
-        print( chemObj.key['A_VEC'])
+        # print( chemObj.key['A_VEC'])
         if "RETARDATION" in chemObj.key:
             if dir != chemObj.key["POL_VEC"]:
                 exit("Direction supplied must match polarizaton direction specified in calculation, the default pol_vec direction is y")
@@ -418,7 +419,7 @@ def drawField(chemObj, xpara, ypara, zpara, scale=1, calctype='static scattered'
     # -- Pengchong Oct. 2016
         coords = transpose(chemObj.coordinates*ANGSTROM2BOHR)
         atom_radii=chemObj.radii()
-        dip_tot=(chemObj.hirshfeld_induced_dipoles_loc+chemObj.hirshfeld_induced_dipoles_loc)
+        dip_tot=(chemObj.hirshfeld_induced_dipoles_loc+chemObj.hirshfeld_induced_dipoles_nonloc)
         dipole=transpose(dip_tot[:,dir,:])    
         charges = zeros(len(dipole[0,:]))
 
@@ -456,8 +457,8 @@ def drawField(chemObj, xpara, ypara, zpara, scale=1, calctype='static scattered'
     else:
         efield = zeros_like(x)
         efield = array(efield, dtype='complex', order='f')
-    nsolv = chemObj.key["NSOLV"]
-    print('nsolv: ', nsolv)
+    # nsolv = chemObj.key["NSOLV"]
+    # print('nsolv: ', nsolv)
     if vec:
         from .f2py import drawing_math_vectors as dmv
         from .f2py import drawing_math_vectors_ret as dmv_ret
@@ -821,7 +822,7 @@ def __build2DGrid(aPara, bPara, cPara):
 def raman_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
                dim=(8,6), dpi=300, lw=2.0, fs=20, invert=False, **kwargs):
     from mfunc import sum_lorentzian
-    from constants import PI
+    from .constants import PI
     import matplotlib.pyplot as plt
     from numpy import linspace
     if 'dir' in kwargs:
@@ -850,7 +851,7 @@ def raman_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
     sum = 0
     if sticks:
         print('Frequency     Cross Section')
-        for i in xrange(len(cross)):
+        for i in range(len(cross)):
             print(freq[i], '      ', cross[i]*scale)
             ax.plot((freq[i], freq[i]), (0, cross[i]*scale), 'r')
             sum += cross[i]*scale
@@ -880,7 +881,7 @@ def raman_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
 def vroa_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
                direction='180deg', dim=(4,3), dpi=300, lw=2.0, fs=8, **kwargs):
     from mfunc import sum_lorentzian
-    from constants import PI
+    from .constants import PI
     import matplotlib.pyplot as plt
     from numpy import linspace
     import numpy
@@ -916,7 +917,7 @@ def vroa_draw(cdata, sticks=True, poop=False, width=10.0, scale_freq=1.0,
     sum = 0
     if sticks:
         print('Frequency     Cross Section')
-        for i in xrange(len(intensity)):
+        for i in range(len(intensity)):
             print(freq[i], '      ', intensity[i]*scale)
             ax.plot((freq[i], freq[i]), (0, intensity[i]*scale), 'r')
             sum += abs(intensity[i])*scale
@@ -975,7 +976,7 @@ def write_cube(xyz,xpara,ypara,zpara,density,name):
     print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(xpara[2], xstep, 0.0, 0.0), file=f)
     print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(ypara[2], 0.0, ystep, 0.0), file=f)
     print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}'.format(zpara[2], 0.0, 0.0, zstep), file=f)
-    for i in xrange(xyz.natoms):
+    for i in range(xyz.natoms):
         print('{0:4d}{1:12.6f}{2:12.6f}{3:12.6f}{4:12.6f}'.format(int(atmNum[i]), 0.0, coords[i,0], coords[i,1], coords[i,2]), file=f)
 
     t = 0
