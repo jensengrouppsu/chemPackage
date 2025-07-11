@@ -164,6 +164,7 @@ class AMS(ChemData):
                     from .excitations import collect_excitations
                     collect_excitations(self, f, indices)
 
+            self.__collect_charge_analyses(f, indices)
             # Collect Hirshfeld polarizability
             self.__collect_hirshfeld_polarizability(f, indices)
 
@@ -295,6 +296,59 @@ class AMS(ChemData):
         # All ADF is DFT calculations
         self.calctype.add('DFT')
 
+    def __collect_charge_analyses(self, f, indices):
+        '''Collects the Voroni, Hirshfeld and Multipole-derived charge analyses.'''
+
+        if 'ATOMIC MULTIPOLE MOMENTS' in indices:
+            ar = indices['ATOMIC MULTIPOLE MOMENTS']
+            # Zhongwei: in case of ValueError
+            try:
+               self.atomic_charges = array([float(f[ar+ix].split()[2]) for ix in range(self.natoms)])
+               self.atomic_dipoles = array([f[ar+ix].split()[3:6] for ix in range(self.natoms)], dtype=float)
+               self.atomic_quadrupoles = array([f[ar+ix].split()[6:12] for ix in range(self.natoms)], dtype=float)
+            except ValueError:
+               pass
+
+        if 'HIRSHFELD CHARGES' in indices:
+            ar = indices['HIRSHFELD CHARGES']
+            hirshfeld_charges = zeros((self.natoms),dtype=float)
+            hcget = 0
+            for i in range(len(f)-ar):
+                temp = f[ar+i].split()
+                if len(temp) != 3: continue
+                if '===' in f[ar+i]: break
+                try:
+                    hirshfeld_charges[hcget] = float(temp[2])
+                    hcget += 1
+                except ValueError:
+                    continue
+                except IndexError:
+                    break
+                if hcget >= self.natoms: break
+            try:
+                self.charges.hirshfeld = hirshfeld_charges[:hcget]
+            except (ValueError, TypeError):
+                pass
+
+        if 'MULLIKEN CHARGES' in indices:
+            ar = indices['MULLIKEN CHARGES']
+            # temporary fix
+            try:
+                self.charges.mulliken = array([float(f[ix+ar].split()[2]) for ix in range(self.natoms)])
+            except (IndexError, TypeError):
+                pass
+
+        if 'VORONOI CHARGES' in indices:
+            ar = indices['VORONOI CHARGES']
+            vkeys = ['Initial Sphere', 'Initial RestCell', 'Initial NetTotal',
+                     'OrthFrag Sphere', 'OrthFrag RestCell', 'OrthFrag NetTotal',
+                     'SCF Sphere', 'SCF RestCell', 'SCF NetTotal', 'VDD']
+            self.charges.voronoi = {}
+            try:
+                for ik in range(len(vkeys)):
+                    self.charges.voronoi.update({vkeys[ik]: array([float(f[ix+ar].split()[ik+2]) for ix in range(self.natoms)])})
+            except TypeError:
+                pass
     def __collect_hirshfeld_polarizability(self, f, indices):
         '''Collects the Hirshfeld local and non-local contribution to the polarizability'''
         '''Collects the Hirshfeld charges'''
