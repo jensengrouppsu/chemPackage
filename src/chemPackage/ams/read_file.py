@@ -127,6 +127,9 @@ def read_file(self):
                #'                             A D F   E X I T':
                 'AMS application finished. Exiting.':
                                                                    ['ADF EXIT', 0],
+
+                ' H I R S H F E L D   C H A R G E   A N A L Y S I S':
+                                                         ['HIRSHFELD CHARGES', 10],
                 }
 
         each =  {
