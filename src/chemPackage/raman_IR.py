@@ -498,7 +498,7 @@ class Raman_IR(object):
         # Now return the scattering factors
         return self._raman
 
-    def raman_cross_section(self, laser=514.5, component='all', **kwargs):
+    def raman_cross_section(self, laser=514.5, component='all', quiet=False, **kwargs):
         """Return the differential Raman cross section for each normal mode.
 
         The option *laser* is the laser wavelength to assume if the
@@ -546,7 +546,7 @@ class Raman_IR(object):
         TEMPERATURE = 298 # K
         # Default to given laser nm if calc was done at static limit
         if not self.e_frequencies[0]:
-            print (laser)
+            if not quiet: print (laser)
             lambda_0 = NM2WAVENUM(laser)
         # Convert to wavenumber from hartrees if not at static limit.
         else:
@@ -561,15 +561,15 @@ class Raman_IR(object):
         if component=='zz':
             pol=self.polarizability[:,2,2]
             scat = absolute((45*pol.conjugate()*pol)*BOHR2ANGSTROM**4)
-            print('Considering only ZZ component')
+            if not quiet: print('Considering only ZZ component')
         elif component == 'xx':
             pol=self.polarizability[:,0,0]
             scat = absolute((45*pol.conjugate()*pol)*BOHR2ANGSTROM**4)
-            print('Considering only XX component')
+            if not quiet: print('Considering only XX component')
         elif component == 'yy': 
             pol=self.polarizability[:,1,1]
             scat = absolute((45*pol.conjugate()*pol)*BOHR2ANGSTROM**4)
-            print('Considering only YY component')
+            if not quiet: print('Considering only YY component')
         else:
             scat = self.scattering_factor()
 
