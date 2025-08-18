@@ -13,6 +13,8 @@ def collect_input(self, f, indices):
         si, ei = indices['ADF START'], indices['ADF END']
     elif 'DFTB START' in indices:
         si, ei = indices['DFTB START'], indices['DFTB END']
+    elif 'ML START' in indices:
+        si, ei = indices['ML START'], indices['ML END']
     f = list(f)
     search = f[:ei]
     for i, x in enumerate(search[si:], si):

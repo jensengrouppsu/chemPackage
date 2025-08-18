@@ -36,7 +36,10 @@ def read_file(self):
                 ' *** adf ***':
                                                                   ['ADF END', 0],
                 ' Evaluation was successful':
-                                                                  ['DFTB END',0],
+                                                                  ['DFTB END', 0],
+                ' Pipe worker finished':
+                                                                  ['ML END', 0],
+
                 #############################
                 # General / Common properties
                 #############################
@@ -118,7 +121,9 @@ def read_file(self):
                 'ADF Engine Input':
                                                                 ['ADF START', 0],
                 'DFTB Engine configuration':
-                                                                ['DFTB START',0],
+                                                                ['DFTB START', 0],
+                'MLPotential Engine':
+                                                                ['ML START', 0],
                 ###########
                 # Technical
                 ###########
