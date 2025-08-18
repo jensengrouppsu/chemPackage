@@ -46,7 +46,7 @@ class AMS(ChemData):
         self.linekeys = ('A1FIT', 'BONDORDER', 'CHARGE', 'CREATE',
                          'NOPRINT', 'PRINT', 'RELATIVISTIC',
                          'SAVE', 'SCANFREQ', 'SYMMETRY', 'THERMO', 'TITLE',
-                         'DEPENDENCY')
+                         'DEPENDENCY','DFTB RESOURCES DIR', 'BACKEND')
         self.singlekeys = ('ALLPOINTS', 'BADER', 'FORCEALDA', 'NEWDIIS',
                            'UNRESTRICTED', 'DIFFUSE', 'EXACTDENSITY',
                            'IGNOREOVERLAP', 'AOMAT2FILE', 'STOFIT', 'TOTALENERGY',
@@ -80,6 +80,14 @@ class AMS(ChemData):
     
             # Collect input block
             if 'ADF START' in indices:
+                from .input_block import collect_input
+                collect_input(self, f, indices)
+            
+            if 'DFTB START' in indices:
+                from .input_block import collect_input
+                collect_input(self, f, indices)
+            
+            if 'ML START' in indices: 
                 from .input_block import collect_input
                 collect_input(self, f, indices)
 
