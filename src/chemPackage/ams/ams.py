@@ -46,7 +46,7 @@ class AMS(ChemData):
         self.linekeys = ('A1FIT', 'BONDORDER', 'CHARGE', 'CREATE',
                          'NOPRINT', 'PRINT', 'RELATIVISTIC',
                          'SAVE', 'SCANFREQ', 'SYMMETRY', 'THERMO', 'TITLE',
-                         'DEPENDENCY')
+                         'DEPENDENCY','DFTB RESOURCES DIR', 'BACKEND')
         self.singlekeys = ('ALLPOINTS', 'BADER', 'FORCEALDA', 'NEWDIIS',
                            'UNRESTRICTED', 'DIFFUSE', 'EXACTDENSITY',
                            'IGNOREOVERLAP', 'AOMAT2FILE', 'STOFIT', 'TOTALENERGY',

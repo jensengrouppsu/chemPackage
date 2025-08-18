@@ -31,9 +31,16 @@ def read_file(self):
                 # Input block
                 #############
 
-                # End of the input block
+                # End of the adf input block
                 ' *** adf ***':
                                                                   ['INPUT END', 0],
+                #End of the dftb input block
+                ' Evaluation was successful':
+                                                                  ['INPUT END', 0],
+                
+                #End of the ML input block
+                ' Pipe worker finished':
+                                                                  ['INPUT END', 0], 
                 #############################
                 # General / Common properties
                 #############################
@@ -111,9 +118,17 @@ def read_file(self):
                 # Input block
                 #############
 
-                # Start of input file
+                # Start of adf input file
                 'ADF Engine Input':
                                                                 ['INPUT START', 0],
+                #Start of dftb input file
+                'DFTB Engine configuration':
+                                                                ['INPUT START', 0],
+                #Start of the ml input file
+                'MLPotential Engine':
+                                                                ['INPUT START', 0],
+                
+    
                 ###########
                 # Technical
                 ###########
