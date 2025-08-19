@@ -68,7 +68,10 @@ def collect_input(self, f, indices):
             index[keyword] = (ix, None)
 
         # I know this is awkard, ML Potential use different separator than space
-        if keyword == 'MODEL': self.key['MODEL'].pop()
+        try:
+            self.key['MODEL'].pop()
+        except KeyError:
+            pass
     # Now, let's find the single-type keywords.  The single-type
     # is just a keyword with no parameters.
     for keyword in self.singlekeys:
