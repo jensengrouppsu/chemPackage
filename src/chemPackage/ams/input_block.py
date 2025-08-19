@@ -9,12 +9,12 @@ def collect_input(self, f, indices):
 
     # Create an upper-case and stripped duplicate of the input block.
     # Remove comments (:: or !).
-    if 'ADF START' in indices:
-        si, ei = indices['ADF START'], indices['ADF END']
-    elif 'DFTB START' in indices:
-        si, ei = indices['DFTB START'], indices['DFTB END']
-    elif 'ML START' in indices:
-        si, ei = indices['ML START'], indices['ML END']
+    for prefix in ("ADF", "DFTB", "ML"):
+        start_key, end_key = f"{prefix} START", f"{prefix} END"
+        if start_key in indices and end_key in indices:
+            si, ei = indices[start_key], indices[end_key]
+            break
+
     f = list(f)
     search = f[:ei]
     for i, x in enumerate(search[si:], si):
