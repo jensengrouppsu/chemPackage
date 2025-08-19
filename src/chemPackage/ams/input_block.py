@@ -55,6 +55,8 @@ def collect_input(self, f, indices):
         for ix in ar:
             # Split this line, then add parameters after keyword to key
             line = ' '.join(f[ix].lstrip().split()[1:])
+            if keyword == "DFTB RESOURCES DIR":
+                line = line.split("DFTB", 1)[1].lstrip("/")
             # Multiple instances possible
             try:
                 self.key[keyword].append(line)
@@ -65,6 +67,8 @@ def collect_input(self, f, indices):
             # Record where found
             index[keyword] = (ix, None)
 
+        # I know this is awkard, ML Potential use different separator than space
+        if keyword == 'MODEL': self.key['MODEL'].pop()
     # Now, let's find the single-type keywords.  The single-type
     # is just a keyword with no parameters.
     for keyword in self.singlekeys:

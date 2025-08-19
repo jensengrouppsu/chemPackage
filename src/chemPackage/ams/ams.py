@@ -46,7 +46,7 @@ class AMS(ChemData):
         self.linekeys = ('A1FIT', 'BONDORDER', 'CHARGE', 'CREATE',
                          'NOPRINT', 'PRINT', 'RELATIVISTIC',
                          'SAVE', 'SCANFREQ', 'SYMMETRY', 'THERMO', 'TITLE',
-                         'DEPENDENCY','DFTB RESOURCES DIR', 'BACKEND')
+                         'DEPENDENCY','DFTB RESOURCES DIR', 'BACKEND', 'MODEL')
         self.singlekeys = ('ALLPOINTS', 'BADER', 'FORCEALDA', 'NEWDIIS',
                            'UNRESTRICTED', 'DIFFUSE', 'EXACTDENSITY',
                            'IGNOREOVERLAP', 'AOMAT2FILE', 'STOFIT', 'TOTALENERGY',
@@ -223,7 +223,7 @@ class AMS(ChemData):
             else:
                 from textwrap import dedent
                 raise CollectionError (dedent('''\
-                The chem package requires the output file to have a copy of
+                The chemPackage requires the output file to have a copy of
                 the input block or have the input file be in the same directory
                 as the output file. The input block is used to determine the
                 calculation type and check for errors.
@@ -297,6 +297,11 @@ class AMS(ChemData):
 
         # All ADF is DFT calculations
         self.calctype.add('DFT')
+        if "DFTB RESOURCES DIR" in self.key:
+            self.calctype.remove('DFT')
+            self.calctype.add('DFTB')
+        elif "BACKEND" in self.key:
+            self.calctype.add('ML Potential')
 
     def __collect_charge_analyses(self, f, indices):
         '''Collects the Voroni, Hirshfeld and Multipole-derived charge analyses.'''
