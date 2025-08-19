@@ -79,18 +79,12 @@ class AMS(ChemData):
             f, indices = read_file(self)
     
             # Collect input block
-            if 'ADF START' in indices:
-                from .input_block import collect_input
-                collect_input(self, f, indices)
+            for prefix in ("ADF", "DFTB", "ML"):
+                start_key= f"{prefix} START"
+                if start_key in indices:
+                    from .input_block import collect_input
+                    collect_input(self, f, indices)
             
-            if 'DFTB START' in indices:
-                from .input_block import collect_input
-                collect_input(self, f, indices)
-            
-            if 'ML START' in indices: 
-                from .input_block import collect_input
-                collect_input(self, f, indices)
-
             # Determine calculation type
             self.__det_calc_type()
 
