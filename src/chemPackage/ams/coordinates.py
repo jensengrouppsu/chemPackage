@@ -33,6 +33,11 @@ def collect_geometry(self, f, indices):
         self.atoms = np.array([x.split()[1] for x in f[s:e]])
         # Store these as initial geometry as well
         self.initial_geometry = self.coordinates.copy()
+
+        s = indices['FRAGMENT GEOMETRY']
+        e = s + self.natoms
+        hirsh_indices = [int(x.split()[2])-1 for x in f[s:e]]
+        self.fragment_coordinates = self.coordinates[hirsh_indices]
     else:
         self._raise_or_pass('Error locating initial geometry block')
 
