@@ -206,6 +206,7 @@ attrlist = (
     'coordinates',
     # Since Hirshfeld atoms are printed out differently
     'fragment_coordinates',
+    'fragment_atoms',
     'initial_geometry',
     'symmetry',
     'energy',
