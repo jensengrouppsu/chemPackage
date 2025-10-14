@@ -261,6 +261,11 @@ class AMS(ChemData):
                 self.calctype.add('FD')
             else:
                 self.calctype.add('STATIC')
+            # By default, assume you are using length gauge
+            self.calctype.add('LENGTH')
+            if 'VELOCITY' in self.subkey:
+                self.calctype.remove("LENGTH")
+                self.calctype.add("VELOCITY")
         # if 'FREQUENCIES' in self.subkey:
         #     self.calctype.add('FREQUENCIES')
         if 'GEOMETRY' in self.key:
@@ -393,34 +398,36 @@ class AMS(ChemData):
                                                 + 1j*float(f[ar[iar]+i].split()[3]) )
                     else:
                         dipoles_loc[idir][ifrag][i] = float(f[ar[iar]+i].split()[2])
-                # Collect induced charges
-                if lcmplx:
-                    charges[idir][ifrag] = ( float(f[ar[iar]+3].split()[1])
-                                         + 1j*float(f[ar[iar]+3].split()[2]) )
-                else:
-                    charges[idir][ifrag] = float(f[ar[iar]+3].split()[1])
-                # Collect induced dipoles: non-local / charge transfer
+                if "VELOCITY" not in self.calctype:
+                    # Collect induced charges
+                    if lcmplx:
+                        charges[idir][ifrag] = ( float(f[ar[iar]+3].split()[1])
+                                             + 1j*float(f[ar[iar]+3].split()[2]) )
+                    else:
+                        charges[idir][ifrag] = float(f[ar[iar]+3].split()[1])
+                    # Collect induced dipoles: non-local / charge transfer
+                    for i in range(3): 
+                        if lcmplx:
+                            dipoles_nonloc[idir][ifrag][i] = ( float(f[ar[iar]+i+4].split()[2])
+                                                    + 1j*float(f[ar[iar]+i+4].split()[3]) )
+                        else:
+                            dipoles_nonloc[idir][ifrag][i] = float(f[ar[iar]+i+4].split()[2])
+                    #sum non-local and local up Xing
+                    for i in range(3):
+                        if lcmplx:
+                            dipoles_all[idir][ifrag][i]=(float(f[ar[iar]+i].split()[2])+float(f[ar[iar]+i+4].split()[2])
+                                                        + 1j*float(f[ar[iar]+i].split()[3])+1j*float(f[ar[iar]+i+4].split()[3]) )
+                        else:
+                            dipoles_all[idir][ifrag][i]=float(f[ar[iar]+i].split()[2])+float(f[ar[iar]+i+4].split()[2])               
+
+            if "VELOCITY" not in self.calctype:
+            # Collect induced dipoles: total / identical to 'Polarizability tensor'
                 for i in range(3): 
                     if lcmplx:
-                        dipoles_nonloc[idir][ifrag][i] = ( float(f[ar[iar]+i+4].split()[2])
-                                                + 1j*float(f[ar[iar]+i+4].split()[3]) )
+                        dipoles_tot[idir][i] = ( float(f[ar[iar]+i+8].split()[2])
+                                                + 1j*float(f[ar[iar]+i+8].split()[3]) )
                     else:
-                        dipoles_nonloc[idir][ifrag][i] = float(f[ar[iar]+i+4].split()[2])
-                #sum non-local and local up Xing
-                for i in range(3):
-                    if lcmplx:
-                        dipoles_all[idir][ifrag][i]=(float(f[ar[iar]+i].split()[2])+float(f[ar[iar]+i+4].split()[2])
-                                                    + 1j*float(f[ar[iar]+i].split()[3])+1j*float(f[ar[iar]+i+4].split()[3]) )
-                    else:
-                        dipoles_all[idir][ifrag][i]=float(f[ar[iar]+i].split()[2])+float(f[ar[iar]+i+4].split()[2])               
-
-            # Collect induced dipoles: total / identical to 'Polarizability tensor'
-            for i in range(3): 
-                if lcmplx:
-                    dipoles_tot[idir][i] = ( float(f[ar[iar]+i+8].split()[2])
-                                            + 1j*float(f[ar[iar]+i+8].split()[3]) )
-                else:
-                    dipoles_tot[idir][i] = float(f[ar[iar]+i+8].split()[2])
+                        dipoles_tot[idir][i] = float(f[ar[iar]+i+8].split()[2])
 
 
         # Return induced charges and dipoles

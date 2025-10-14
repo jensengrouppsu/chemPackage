@@ -1833,3 +1833,11 @@ class Polarizability(object):
             temp = einsum('ia,jb,kc,ld,me,nf,zabcdef->zijklmn', R, R, R, R, R, R, temp)
             self.beta_qqq = array([[[[temp[i][j][k][l] for l in iQQ] for k in iQQ] for j in iQQ]
                                   for i in range(self.nmodes)])
+        if self.hirshfeld_induced_dipoles_loc is not None:
+            self.hirshfeld_induced_dipoles_loc =  einsum('ij,kl,ajl', 
+                                                            R, R, self.hirshfeld_induced_dipoles_loc)
+            if "VELOCITY" not in self.calctype:
+                self.hirshfeld_induced_dipoles_nonloc =  einsum('ij,kl,ajl', 
+                                                                R, R, self.hirshfeld_induced_dipoles_nonloc)
+                self.hirshfeld_induced_dipoles_tot =  einsum('ij,kl,ajl', 
+                                                                R, R, self.hirshfeld_induced_dipoles_tot)
