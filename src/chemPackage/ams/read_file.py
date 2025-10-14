@@ -60,6 +60,8 @@ def read_file(self):
                 'Geometry':
                                                            ['INITIAL GEOMETRY', 5],
 
+                ' FRAGMENTS':
+                                                           ['FRAGMENT GEOMETRY',3],
                 #########################
                 # Vibrational frequencies
                 #########################

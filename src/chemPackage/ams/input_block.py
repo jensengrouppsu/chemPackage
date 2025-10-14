@@ -197,6 +197,8 @@ def __determine_subkeys(self, k, s, e, search):
         #    self.subkey.add('BETA')
         if next((x for x in search[s:e] if 'GAMMA' in x), False):
             self.subkey.add('GAMMA')
+        if next((x for x in search[s:e] if 'VELOCITY' in x), False):
+            self.subkey.add('VELOCITY')
         # Now freqrange keyword only exists in poltddft module
         # if next((x for x in search[s:e] if 'FREQRANGE' in x), False):
         #     self.subkey.add('FREQRANGE')
