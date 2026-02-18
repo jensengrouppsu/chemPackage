@@ -11,8 +11,8 @@ class Raman_IR(object):
 
         '''
         from numpy import vstack
-        from numpy import fastCopyAndTranspose as fcat
-
+        fcat = lambda x: np.array(x.T, copy=True)
+        
         assert 'FREQUENCIES' in self.calctype, ('printVibSpec(): '
                                               'Not a FREQUENCIES calculation.')
 

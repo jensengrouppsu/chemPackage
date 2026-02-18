@@ -1,7 +1,7 @@
 from __future__ import print_function, division
 from copy import deepcopy
 from numpy import array, append, asarray
-from numpy import fastCopyAndTranspose as fcat
+fcat = lambda x: np.array(x.T, copy=True)
 
 def collect_dim(self, f, indices):
     '''Collect all DIM properties.'''

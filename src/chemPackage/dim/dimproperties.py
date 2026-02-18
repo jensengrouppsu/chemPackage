@@ -1,6 +1,6 @@
 from __future__ import print_function, division
 from numpy import array, where, zeros, append, argsort
-from numpy import fastCopyAndTranspose as fcat
+fcat = lambda x: np.array(x.T, copy=True)
 from ..constants import BOHR2ANGSTROM
 
 def collect_dim(self, f, indices):

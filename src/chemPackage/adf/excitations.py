@@ -3,8 +3,6 @@ import re
 from numpy import array, append, arange
 from numpy import zeros, vectorize, argsort
 import numpy as np
-# deprcatated
-# from numpy import fastCopyAndTranspose as fcat
 from numpy import where, isnan
 from numpy.core.records import fromarrays
 from ..f2py import find_equal
