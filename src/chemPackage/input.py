@@ -6,7 +6,7 @@ class InputFiles(object):
     'Extends ChemData class with methods to create and compare input files.'
 
     def copy_template(self, template, file=None, a1=1, a2=None, charge=None,
-                      basis=None):
+                      basis=None, stokesshift=None):
         '''Prints a new input file based on a template.  Writes to file.'''
         from . import collect
         from os.path import splitext
@@ -123,7 +123,30 @@ class InputFiles(object):
             # If it succeeds, then remember that we must close the file
             else:
                 closebool = True
-
+        
+        # If stokes is requested, add it
+        if stokesshift is not None:
+            # Verify that DIMQM block exists
+            try:
+                idimqm = next(i for i, x in enumerate(tmplt) if 'DIMQM'.casefold() in x.casefold())
+            except:
+                raise ChemDataError ('Stokes-shift requested but template file has no DIMQM block.')
+            
+            # Determine indentation (makes the input file prettier)
+            # The indentation is determined by the number of leading spaces
+            # in the first line after the DIMQM key
+            iind = len(tmplt[idimqm + 1]) - len(tmplt[idimqm + 1].lstrip(' '))
+            indentation = tmplt[idimqm + 1][:iind]
+            
+            if stokesshift[:6] == 'STOKES':
+                # Stokes key does not exist, add it under DIMQM
+                istokes = idimqm + 1
+                tmplt.insert(istokes, indentation + stokesshift)
+            else:
+                # Stokes key does exist, find it and append to it
+                istokes = next(i for i, x in enumerate(tmplt) if 'STOKES'.casefold() in x.casefold())
+                tmplt[istokes] = tmplt[istokes] + stokesshift
+        
         # Print out the template
         # Everything before the coordinates
         for x in tmplt[0:s]:
